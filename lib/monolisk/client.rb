@@ -25,6 +25,7 @@ module Monolisk
     PARAM_APP_VERSION = 'app_version'
 
     UID_SIZE = 24
+    URI_PARAM_SIZE_LIMIT = 150
 
     PID_DEFAULT = -10
     SID_DEFAULT = 321
@@ -56,8 +57,15 @@ module Monolisk
       params[PARAM_APP_VERSION] = @version
       params[PARAM_SESSION_ID] = sid
       params[PARAM_UID] = @uid
+
       uri_params = params.clone
       uri_params[PARAM_PID] = pid
+      uri_params.each_key do |k|
+        v = uri_params[k].to_s
+        next if v.length <= URI_PARAM_SIZE_LIMIT
+
+        uri_params[k] = v.slice(0, URI_PARAM_SIZE_LIMIT).concat('...')
+      end
 
       params = URI.encode_www_form(params)
       uri_params = URI.encode_www_form(uri_params)
