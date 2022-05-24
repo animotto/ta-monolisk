@@ -99,10 +99,65 @@ module Monolisk
     end
 
     ##
-    # Returns suitable dungeons chains for player
-    def suitable_dungeons_chains(id = @id)
+    # Returns dungeons from followed list
+    def dungeons_from_follow(id = @id)
       @client.request(
-        'get_suitable_dungeons_chains_for_player',
+        'get_dungeons_from_people_i_follow',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns newest dungeons
+    def newest_dungeons(id = @id)
+      @client.request(
+        'get_newest_dungeons',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns featured dungeons
+    def featured_dungeons(id = @id)
+      @client.request(
+        'get_featured_dungeons',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns suitable dungeon chains for player
+    def suitable_dungeon_chains(id = @id)
+      @client.request(
+        'get_suitable_dungeon_chains_for_player',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns newest dungeon chains
+    def newest_dungeon_chains(id = @id)
+      @client.request(
+        'get_newest_dungeon_chains',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns featured dungeon chains
+    def featured_dungeon_chains(id = @id)
+      @client.request(
+        'get_featured_dungeon_chains',
         { 'id_player' => id },
         id,
         @sid
@@ -195,6 +250,22 @@ module Monolisk
     end
 
     ##
+    # Rates the dungeon chain
+    def rate_dungeon_chain(owner_id, dungeon_chain_id, rating, id = @id)
+      @client.request(
+        'rate_dungeon_chain',
+        {
+          'id_player' => id,
+          'id_dungeon_chain_owner' => owner_id,
+          'id_dungeon_chain' => dungeon_chain_id,
+          'chosen_rating' => rating
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
     # Returns dungeon chains marked as "play later"
     def dungeon_chains_play_later(id = @id)
       @client.request(
@@ -279,6 +350,42 @@ module Monolisk
           'id_player' => id,
           'name' => name
         },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Discards a daily goal
+    def discard_daily_goal(goal_type, id = @id)
+      @client.request(
+        'discard_daily_goal',
+        {
+          'id_player' => id,
+          'daily_goal_type' => goal_type
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns top players by glory
+    def top_players_by_glory(id = @id)
+      @client.request(
+        'get_top_players_by_glory',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns top players by stars
+    def top_players_by_stars(id = @id)
+      @client.request(
+        'get_top_players_by_stars',
+        { 'id_player' => id },
         id,
         @sid
       )
