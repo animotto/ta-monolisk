@@ -19,11 +19,13 @@ CONTEXT_PLAYER.add_command(
 
   shell.puts(format('%-15s %s', 'ID', data['player']['id']))
   shell.puts(format('%-15s %s', 'Name', data['player']['name']))
-  shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
   shell.puts(format('%-15s %s', 'Coins', data['player']['coins']))
   shell.puts(format('%-15s %s', 'Experience', data['player']['exp']))
   shell.puts(format('%-15s %s', 'Glory', data['player']['glory']))
   shell.puts(format('%-15s %s', 'Stars', data['starsInfo']['totalStarsCount']))
+  shell.puts(format('%-15s %s', 'Dust equipment', data['player']['dust_equipment']))
+  shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
+  shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
 rescue Monolisk::RequestError => e
   shell.puts(e)
 end

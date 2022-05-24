@@ -390,5 +390,19 @@ module Monolisk
         @sid
       )
     end
+
+    ##
+    # Returns players profile info
+    def player_profile_info(player, id = @id)
+      @client.request(
+        'get_player_profile_info',
+        {
+          'id_player' => id,
+          'id_profile' => player,
+        },
+        id,
+        @sid
+      )
+    end
   end
 end
