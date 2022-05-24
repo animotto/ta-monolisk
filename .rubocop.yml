@@ -3,3 +3,6 @@ AllCops:
 
 Metrics:
   Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false

@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+require 'optparse'
+require 'yaml'
+require 'sandbox'
+require 'monolisk'
+
+DATA_DIR = File.join(Dir.home, '.ta-monolisk')
+CONFIG_DIR = File.join(DATA_DIR, 'configs')
+CONFIG_EXT = 'conf'
+
+PROMPT = '> '
+BANNER = <<~BANNER
+  Trickster Arts Monolisk sandbox
+BANNER
+
+SHELL = Sandbox::Shell.new(prompt: PROMPT, banner: BANNER)
+
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = BANNER
+  opts.on('-c CONFIG', 'Run with config')
+end
+begin
+  parser.parse!(into: options)
+rescue OptionParser::MissingArgument => e
+  SHELL.puts(e)
+  exit
+end
+
+unless options.key?(:c)
+  SHELL.puts(parser.help)
+  exit
+end
+
+Dir.mkdir(DATA_DIR) unless Dir.exist?(DATA_DIR)
+Dir.mkdir(CONFIG_DIR) unless Dir.exist?(CONFIG_DIR)
+
+config_file = File.join(CONFIG_DIR, [options[:c], CONFIG_EXT].join('.'))
+unless File.file?(config_file)
+  SHELL.puts("Config #{options[:c]} doesn't exist")
+  exit
+end
+
+config = YAML.safe_load(File.read(config_file))
+
+unless config.key?('id') && config.key?('password')
+  SHELL.puts("Config #{options[:c]} doesn't contain id or password parameter")
+  exit
+end
+
+API = Monolisk::API.new(config['id'], config['password'])
+
+require 'cli'
+
+SHELL.run
