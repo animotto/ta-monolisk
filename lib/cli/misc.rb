@@ -9,11 +9,13 @@ GAME_THREAD = GAME_THREAD_STRUCT.new
 GAME_THREAD.proc = proc do |game, logger|
   loop do
     game.check_session
-    sleep(game.app_settings['appSettings']['periodicSessionCheckInterval'])
-  rescue Monolisk::RequestError
+  rescue Monolisk::InvalidSessionError
     logger.fail('[SESSION IS INVALID]')
     game.disconnect
     break
+  rescue Monolisk::RequestError
+  ensure
+    sleep(game.app_settings['appSettings']['periodicSessionCheckInterval'])
   end
 end
 

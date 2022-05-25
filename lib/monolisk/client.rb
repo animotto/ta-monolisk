@@ -4,6 +4,29 @@ require 'net/http'
 require 'securerandom'
 
 module Monolisk
+  # Request error
+  class RequestError < StandardError
+    attr_reader :data, :query, :code
+
+    def initialize(data, query, code = nil)
+      @data = data
+      @query = query
+      @code = code
+
+      super(self)
+    end
+
+    def to_s
+      return "#{@data} (#{@code}: #{@query})" if @code
+
+      "#{@data} (#{@query})"
+    end
+  end
+
+  ##
+  # Invalid session error
+  class InvalidSessionError < RequestError; end
+
   ##
   # Client
   class Client
@@ -33,6 +56,11 @@ module Monolisk
     AMOUNT = 5
 
     ClientStruct = Struct.new(:client, :mutex)
+
+    EXCEPTION_PREFIX = 'com.tricksterarts.monoliskbackend.exceptions.'
+    EXCEPTIONS = {
+      'InvalidSessionException' => InvalidSessionError
+    }.freeze
 
     def initialize(
       host: HOST,
@@ -89,8 +117,18 @@ module Monolisk
       client = @clients.detect { |c| !c.mutex.locked? }
       client = @clients.first if client.nil?
       client.mutex.synchronize do
-        response = client.client.post(query, params, HEADERS)
-        raise RequestError.new(response.code, response.body, query) unless response.instance_of?(Net::HTTPOK)
+        begin
+          response = client.client.post(query, params, HEADERS)
+        rescue StandardError => e
+          raise RequestError.new(e.class.to_s, query)
+        end
+
+        unless response.instance_of?(Net::HTTPOK)
+          response.body =~ /^#{EXCEPTION_PREFIX}(\w+)/
+          exception = Regexp.last_match[1]
+
+          raise EXCEPTIONS.fetch(exception, RequestError).new(response.body, query, response.code)
+        end
 
         return response.body
       end
@@ -100,24 +138,6 @@ module Monolisk
 
     def generate_uid
       SecureRandom.alphanumeric(UID_SIZE)
-    end
-  end
-
-  ##
-  # Request error
-  class RequestError < StandardError
-    attr_reader :code, :data, :uri
-
-    def initialize(code, data, query)
-      @code = code
-      @data = data
-      @query = query
-
-      super(self)
-    end
-
-    def to_s
-      "#{@data} (#{@code}: #{@query})"
     end
   end
 end
