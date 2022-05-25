@@ -277,7 +277,7 @@ module Monolisk
     end
 
     ##
-    # Removes the dungeon chain from "play later"
+    # Removes the dungeon chain from the "play later" list
     def remove_dungeon_chain_play_later(dungeon_chain_id, id = @id)
       @client.request(
         'remove_dungeon_chain_from_play_later',
@@ -398,7 +398,7 @@ module Monolisk
         'get_player_profile_info',
         {
           'id_player' => id,
-          'id_profile' => player,
+          'id_profile' => player
         },
         id,
         @sid

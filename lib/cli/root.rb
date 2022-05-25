@@ -51,7 +51,8 @@ SHELL.add_command(
     next
   end
 
-  shell.puts(API.check_session)
+  API.check_session
+  shell.puts('OK')
 rescue Monolisk::RequestError => e
   shell.puts(e)
 end

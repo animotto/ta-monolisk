@@ -8,7 +8,7 @@ require 'json'
 CONTEXT_TOP.add_command(
   :glory,
   description: 'Top players by glory'
-) do |tokens, shell|
+) do |_tokens, shell|
   unless API.connected?
     shell.puts(NOT_CONNECTED)
     next
@@ -28,16 +28,16 @@ CONTEXT_TOP.add_command(
     )
   )
   data['playerEntries'].each_with_index do |player, i|
-  shell.puts(
-    format(
-      '%-2d %-17d %-17s %-10d %-10d',
-      i + 1,
-      player['playerId'],
-      player['name'],
-      player['exp'],
-      player['glory']
+    shell.puts(
+      format(
+        '%-2d %-17d %-17s %-10d %-10d',
+        i + 1,
+        player['playerId'],
+        player['name'],
+        player['exp'],
+        player['glory']
+      )
     )
-  )
   end
 rescue Monolisk::RequestError => e
   shell.puts(e)
@@ -47,7 +47,7 @@ end
 CONTEXT_TOP.add_command(
   :stars,
   description: 'Top players by stars'
-) do |tokens, shell|
+) do |_tokens, shell|
   unless API.connected?
     shell.puts(NOT_CONNECTED)
     next
@@ -64,21 +64,21 @@ CONTEXT_TOP.add_command(
       'Name',
       'Experience',
       'Glory',
-      'Stars',
+      'Stars'
     )
   )
   data['playerEntries'].each_with_index do |player, i|
-  shell.puts(
-    format(
-      '%-2d %-17d %-17s %-10d %-10d %-5d',
-      i + 1,
-      player['playerId'],
-      player['name'],
-      player['exp'],
-      player['glory'],
-      player['perSeasonStarsCount']
+    shell.puts(
+      format(
+        '%-2d %-17d %-17s %-10d %-10d %-5d',
+        i + 1,
+        player['playerId'],
+        player['name'],
+        player['exp'],
+        player['glory'],
+        player['perSeasonStarsCount']
+      )
     )
-  )
   end
 rescue Monolisk::RequestError => e
   shell.puts(e)
