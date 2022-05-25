@@ -2,6 +2,19 @@
 
 require 'json'
 
+GAME_THREAD_STRUCT = Struct.new(:thread, :proc)
+GAME_THREAD = GAME_THREAD_STRUCT.new
+GAME_THREAD.proc = proc do |game, shell|
+  loop do
+    game.check_session
+    sleep(game.app_settings['appSettings']['periodicSessionCheckInterval'])
+  rescue Monolisk::RequestError
+    shell.puts("\e[1;31m[SESSION IS INVALID]\e[0m")
+    game.disconnect
+    break
+  end
+end
+
 ## Contexts
 
 # player
@@ -20,12 +33,31 @@ SHELL.add_command(
   :connect,
   description: 'Authentication by ID and password'
 ) do |_tokens, shell|
-  data = API.login('RU')
-  data = JSON.parse(data)
-  API.sid = data['sessionId']
+  GAME.connect
   shell.puts('OK')
+
+  GAME_THREAD.thread&.kill
+  GAME_THREAD.thread = Thread.new do
+    GAME_THREAD.proc.call(GAME, shell)
+  end
 rescue Monolisk::RequestError => e
   shell.puts(e)
+end
+
+# disconnect
+SHELL.add_command(
+  :disconnect,
+  description: 'Erase the session ID'
+) do |_tokens, shell|
+  unless GAME.connected?
+    shell.puts(NOT_CONNECTED)
+    next
+  end
+
+  GAME.disconnect
+  shell.puts('OK')
+
+  GAME_THREAD.thread&.kill
 end
 
 # sid
@@ -33,12 +65,12 @@ SHELL.add_command(
   :sid,
   description: 'Show session ID'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  shell.puts(API.sid)
+  shell.puts(GAME.api.sid)
 end
 
 # check
@@ -46,12 +78,12 @@ SHELL.add_command(
   :check,
   description: 'Check the session'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  API.check_session
+  GAME.api.check_session
   shell.puts('OK')
 rescue Monolisk::RequestError => e
   shell.puts(e)
@@ -62,7 +94,7 @@ SHELL.add_command(
   :settings,
   description: 'Application settings'
 ) do |_tokens, shell|
-  shell.puts(API.app_settings)
+  shell.puts(GAME.api.app_settings)
 rescue Monolisk::RequestError => e
   shell.puts(e)
 end
@@ -108,7 +140,7 @@ SHELL.add_command(
   shell.puts(format('%-15s %s', 'Coins', data['player']['coins']))
   shell.puts(format('%-15s %s', 'Experience', data['player']['exp']))
   shell.puts(format('%-15s %s', 'Glory', data['player']['glory']))
-  shell.puts(format('%-15s %s', 'Stars', data['starsInfo']['totalStarsCount']))
+  shell.puts(format('%-15s %s', 'Stars', data['starsInfo']['totalStarsCount'])) unless data['starsInfo'].nil?
   shell.puts(format('%-15s %s', 'Dust equipment', data['player']['dust_equipment']))
   shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
   shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))

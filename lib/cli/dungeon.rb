@@ -13,12 +13,12 @@ CONTEXT_DUNGEON.add_command(
   :suitable,
   description: 'Show suitable dungeons'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.suitable_dungeons
+  data = GAME.api.suitable_dungeons
   data = JSON.parse(data)
 
   shell.puts(
@@ -56,12 +56,12 @@ CONTEXT_DUNGEON.add_command(
   :newest,
   description: 'Show newest dungeons'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.newest_dungeons
+  data = GAME.api.newest_dungeons
   data = JSON.parse(data)
 
   shell.puts(
@@ -99,12 +99,12 @@ CONTEXT_DUNGEON.add_command(
   :featured,
   description: 'Show featured dungeons'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.featured_dungeons
+  data = GAME.api.featured_dungeons
   data = JSON.parse(data)
 
   shell.puts(
@@ -137,17 +137,17 @@ rescue Monolisk::RequestError => e
   shell.puts(e)
 end
 
-# follow
+# following
 CONTEXT_DUNGEON.add_command(
-  :follow,
+  :following,
   description: 'Show dungeons from players you follow'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.dungeons_from_follow
+  data = GAME.api.dungeons_from_follow
   data = JSON.parse(data)
 
   shell.puts(
@@ -186,14 +186,14 @@ CONTEXT_DUNGEON.add_command(
   description: 'Dungeon comments',
   params: ['<id>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
   dungeon = tokens[1].to_i
 
-  data = API.dungeon_comments(0, dungeon)
+  data = GAME.api.dungeon_comments(0, dungeon)
   data = JSON.parse(data)
 
   if data['dungeonComments'].nil?
@@ -232,7 +232,7 @@ CONTEXT_DUNGEON.add_command(
   description: 'Write a comment for the dungeon',
   params: ['<owner>', '<id>', '<ver>', '<avatar>', '<text>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
@@ -243,7 +243,7 @@ CONTEXT_DUNGEON.add_command(
   avatar = tokens[4].to_i
   text = tokens[5]
 
-  data = API.add_dungeon_comment(owner, dungeon, version, avatar, text)
+  data = GAME.api.add_dungeon_comment(owner, dungeon, version, avatar, text)
   data = JSON.parse(data)
 
   data['dungeonComments']['comments'].each do |comment|
@@ -277,7 +277,7 @@ CONTEXT_DUNGEON.add_command(
   description: 'Rate the dungeon',
   params: ['<owner>', '<id>', '<rating>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
@@ -286,7 +286,7 @@ CONTEXT_DUNGEON.add_command(
   id = tokens[2].to_i
   rating = tokens[3].to_i
 
-  shell.puts(API.rate_dungeon(owner, id, rating))
+  shell.puts(GAME.api.rate_dungeon(owner, id, rating))
 rescue Monolisk::RequestError => e
   shell.puts(e)
 end
@@ -298,12 +298,12 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   :suitable,
   description: 'Show suitable dungeon chains'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.suitable_dungeon_chains
+  data = GAME.api.suitable_dungeon_chains
   data = JSON.parse(data)
 
   shell.puts(
@@ -337,12 +337,12 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   :newest,
   description: 'Show newest dungeon chains'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.newest_dungeon_chains
+  data = GAME.api.newest_dungeon_chains
   data = JSON.parse(data)
 
   shell.puts(
@@ -376,12 +376,12 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   :featured,
   description: 'Show featured dungeon chains'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.featured_dungeon_chains
+  data = GAME.api.featured_dungeon_chains
   data = JSON.parse(data)
 
   shell.puts(
@@ -415,12 +415,12 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   :later,
   description: 'Show dungeon chains marked as "play later"'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.dungeon_chains_play_later
+  data = GAME.api.dungeon_chains_play_later
   data = JSON.parse(data)
 
   if data['dungeonChains'].empty?
@@ -459,12 +459,12 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   :current,
   description: 'Show currently played dungeon chain'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  shell.puts(API.currently_played_dungeon_chain)
+  shell.puts(GAME.api.currently_played_dungeon_chain)
 rescue Monolisk::RequestError => e
   shell.puts(e)
 end
@@ -475,7 +475,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   description: 'Rate the dungeon chain',
   params: ['<owner>', '<id>', '<rating>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
@@ -484,7 +484,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   id = tokens[2].to_i
   rating = tokens[3].to_i
 
-  shell.puts(API.rate_dungeon_chain(owner, id, rating))
+  shell.puts(GAME.api.rate_dungeon_chain(owner, id, rating))
 rescue Monolisk::RequestError => e
   shell.puts(e)
 end

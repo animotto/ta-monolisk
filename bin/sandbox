@@ -52,6 +52,7 @@ unless config.key?('id') && config.key?('password')
 end
 
 API = Monolisk::API.new(config['id'], config['password'])
+GAME = Monolisk::Game.new(config['id'], config['password'])
 
 require 'cli'
 

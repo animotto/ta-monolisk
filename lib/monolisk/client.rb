@@ -30,13 +30,18 @@ module Monolisk
     PID_DEFAULT = -10
     SID_DEFAULT = 321
 
+    AMOUNT = 5
+
+    ClientStruct = Struct.new(:client, :mutex)
+
     def initialize(
       host: HOST,
       port: PORT,
       ssl: SSL,
       path: PATH,
       platform: PLATFORM,
-      version: VERSION
+      version: VERSION,
+      amount: AMOUNT
     )
       @host = host
       @port = port
@@ -45,8 +50,16 @@ module Monolisk
       @platform = platform
       @version = version
 
-      @client = Net::HTTP.new(@host, @port)
-      @client.use_ssl = @ssl
+      @amount = amount
+      @clients = []
+      @amount.times do
+        client = Net::HTTP.new(@host, @port)
+        client.use_ssl = @ssl
+        @clients << ClientStruct.new(
+          client,
+          Mutex.new
+        )
+      end
 
       @uid = generate_uid
     end
@@ -73,10 +86,14 @@ module Monolisk
       path = File.join(@path, path)
       query = [path, uri_params].join('&')
 
-      response = @client.post(query, params, HEADERS)
-      raise RequestError.new(response.code, response.body, query) unless response.instance_of?(Net::HTTPOK)
+      client = @clients.detect { |c| !c.mutex.locked? }
+      client = @clients.first if client.nil?
+      client.mutex.synchronize do
+        response = client.client.post(query, params, HEADERS)
+        raise RequestError.new(response.code, response.body, query) unless response.instance_of?(Net::HTTPOK)
 
-      response.body
+        return response.body
+      end
     end
 
     private

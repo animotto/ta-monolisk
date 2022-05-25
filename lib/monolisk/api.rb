@@ -30,12 +30,6 @@ module Monolisk
     end
 
     ##
-    # Returns true if there is session id
-    def connected?
-      !@sid.nil?
-    end
-
-    ##
     # Returns application settings
     def app_settings
       @client.request('get_app_settings')

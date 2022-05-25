@@ -9,12 +9,12 @@ CONTEXT_TOP.add_command(
   :glory,
   description: 'Top players by glory'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.top_players_by_glory
+  data = GAME.api.top_players_by_glory
   data = JSON.parse(data)
 
   shell.puts(
@@ -48,12 +48,12 @@ CONTEXT_TOP.add_command(
   :stars,
   description: 'Top players by stars'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.top_players_by_stars
+  data = GAME.api.top_players_by_stars
   data = JSON.parse(data)
 
   shell.puts(

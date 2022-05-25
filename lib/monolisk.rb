@@ -3,3 +3,4 @@
 require 'monolisk/version'
 require 'monolisk/client'
 require 'monolisk/api'
+require 'monolisk/game'

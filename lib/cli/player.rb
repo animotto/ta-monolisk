@@ -9,12 +9,12 @@ CONTEXT_PLAYER.add_command(
   :profile,
   description: 'Profile'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.full_player_info
+  data = GAME.api.full_player_info
   data = JSON.parse(data)
 
   shell.puts(format('%-15s %s', 'ID', data['player']['id']))
@@ -36,14 +36,14 @@ CONTEXT_PLAYER.add_command(
   description: 'Avatars loadout',
   params: ['<avatar>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
   avatar = tokens[1].to_i
 
-  data = API.full_player_info
+  data = GAME.api.full_player_info
   data = JSON.parse(data)
 
   key = "av#{avatar}Loadout"
@@ -64,12 +64,12 @@ CONTEXT_PLAYER.add_command(
   :cards,
   description: 'Cards'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.full_player_info
+  data = GAME.api.full_player_info
   data = JSON.parse(data)
 
   shell.puts(
@@ -100,12 +100,12 @@ CONTEXT_PLAYER.add_command(
   description: 'Rename',
   params: ['<name>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  shell.puts(API.player_name(tokens[1]))
+  shell.puts(GAME.api.player_name(tokens[1]))
 rescue Monolisk::RequestError => e
   shell.puts(e)
 end
@@ -115,14 +115,14 @@ CONTEXT_PLAYER.add_command(
   :following,
   description: 'Show the following list'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.full_player_info
+  data = GAME.api.full_player_info
   data = JSON.parse(data)
-  data = API.player_followig_list(data['player']['id'])
+  data = GAME.api.player_followig_list(data['player']['id'])
   data = JSON.parse(data)
 
   if data['playerEntries'].empty?
@@ -155,14 +155,14 @@ CONTEXT_PLAYER.add_command(
   :followers,
   description: 'Show the followers list'
 ) do |_tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
-  data = API.full_player_info
+  data = GAME.api.full_player_info
   data = JSON.parse(data)
-  data = API.player_followers_list(data['player']['id'])
+  data = GAME.api.player_followers_list(data['player']['id'])
   data = JSON.parse(data)
 
   if data['playerEntries'].empty?
@@ -196,14 +196,14 @@ CONTEXT_PLAYER.add_command(
   description: 'Add player to the following list',
   params: ['<id>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
   id = tokens[1].to_i
 
-  API.follow_player(id)
+  GAME.api.follow_player(id)
   shell.puts('OK')
 rescue Monolisk::RequestError => e
   shell.puts(e)
@@ -215,14 +215,14 @@ CONTEXT_PLAYER.add_command(
   description: 'Remove player from the following list',
   params: ['<id>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     shell.puts(NOT_CONNECTED)
     next
   end
 
   id = tokens[1].to_i
 
-  API.unfollow_player(id)
+  GAME.api.unfollow_player(id)
   shell.puts('OK')
 rescue Monolisk::RequestError => e
   shell.puts(e)
