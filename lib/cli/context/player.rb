@@ -2,7 +2,11 @@
 
 require 'json'
 
-## Commands
+## Contexts
+
+CONTEXT_PLAYER_DUNGEON = CONTEXT_PLAYER.add_context(:dungeon, description: 'Player dungeons')
+
+## Player commands
 
 # profile
 CONTEXT_PLAYER.add_command(
@@ -16,16 +20,8 @@ CONTEXT_PLAYER.add_command(
 
   data = GAME.api.full_player_info
   data = JSON.parse(data)
-
-  shell.puts(format('%-15s %s', 'ID', data['player']['id']))
-  shell.puts(format('%-15s %s', 'Name', data['player']['name']))
-  shell.puts(format('%-15s %s', 'Coins', data['player']['coins']))
-  shell.puts(format('%-15s %s', 'Experience', data['player']['exp']))
-  shell.puts(format('%-15s %s', 'Glory', data['player']['glory']))
-  shell.puts(format('%-15s %s', 'Stars', data['starsInfo']['totalStarsCount']))
-  shell.puts(format('%-15s %s', 'Dust equipment', data['player']['dust_equipment']))
-  shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
-  shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
+  profile = Printer::Profile.new(data)
+  shell.puts(profile)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -72,24 +68,13 @@ CONTEXT_PLAYER.add_command(
   data = GAME.api.full_player_info
   data = JSON.parse(data)
 
-  shell.puts(
-    format(
-      '%-20s %-5s',
-      'ID',
-      'Amount'
-    )
+  table = Printer::Table.new(
+    'Cards',
+    ['ID', 'Amount'],
+    data['ownedCards'].map { |c| [c['identifier'], c['count']] }
   )
 
-  cards = data['ownedCards'].sort { |a, b| a['identifier'] <=> b['identifier'] }
-  cards.each do |card|
-    shell.puts(
-      format(
-        '%-20s %-5s',
-        card['identifier'],
-        card['count']
-      )
-    )
-  end
+  shell.puts(table)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -130,22 +115,13 @@ CONTEXT_PLAYER.add_command(
     next
   end
 
-  shell.puts(
-    format(
-      '%-17s %-15s',
-      'ID',
-      'Name'
-    )
+  table = Printer::Table.new(
+    'Following',
+    ['ID', 'Name'],
+    data['playerEntries'].map { |p| [p['id'], p['name']] }
   )
-  data['playerEntries'].each do |player|
-    shell.puts(
-      format(
-        '%-17s %-15s',
-        player['id'],
-        player['name']
-      )
-    )
-  end
+
+  shell.puts(table)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -170,22 +146,13 @@ CONTEXT_PLAYER.add_command(
     next
   end
 
-  shell.puts(
-    format(
-      '%-17s %-15s',
-      'ID',
-      'Name'
-    )
+  table = Printer::Table.new(
+    'Followers',
+    ['ID', 'Name'],
+    data['playerEntries'].map { |p| [p['id'], p['name']] }
   )
-  data['playerEntries'].each do |player|
-    shell.puts(
-      format(
-        '%-17s %-15s',
-        player['id'],
-        player['name']
-      )
-    )
-  end
+
+  shell.puts(table)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -224,6 +191,27 @@ CONTEXT_PLAYER.add_command(
 
   GAME.api.unfollow_player(id)
   LOGGER.success('OK')
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
+
+## Dungeon commands
+
+# list
+CONTEXT_PLAYER_DUNGEON.add_command(
+  :list,
+  description: 'Player dungeons'
+) do |_tokens, shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  data = GAME.api.player_dungeons
+  data = JSON.parse(data)
+
+  dungeons = Printer::PlayerDungeons.new(data)
+  shell.puts(dungeons)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end

@@ -94,9 +94,13 @@ SHELL.add_command(
   data = API.create_player
   data = JSON.parse(data)
 
-  shell.puts(format('%-15s %s', 'ID', data['id']))
-  shell.puts(format('%-15s %s', 'Password', data['password']))
-  shell.puts(format('%-15s %s', 'Session ID', data['sessionId']))
+  list = Printer::List.new(
+    'New account',
+    ['ID', 'Password', 'Session ID'],
+    [data['id'], data['password'], data['sessionId']]
+  )
+
+  shell.puts(list)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -107,7 +111,7 @@ SHELL.add_command(
   description: 'Show player profile info',
   params: ['<id>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     LOGGER.log(NOT_CONNECTED)
     next
   end
@@ -122,15 +126,8 @@ SHELL.add_command(
     next
   end
 
-  shell.puts(format('%-15s %s', 'ID', data['player']['id']))
-  shell.puts(format('%-15s %s', 'Name', data['player']['name']))
-  shell.puts(format('%-15s %s', 'Coins', data['player']['coins']))
-  shell.puts(format('%-15s %s', 'Experience', data['player']['exp']))
-  shell.puts(format('%-15s %s', 'Glory', data['player']['glory']))
-  shell.puts(format('%-15s %s', 'Stars', data['starsInfo']['totalStarsCount'])) unless data['starsInfo'].nil?
-  shell.puts(format('%-15s %s', 'Dust equipment', data['player']['dust_equipment']))
-  shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
-  shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
+  profile = Printer::Profile.new(data)
+  shell.puts(profile)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -141,7 +138,7 @@ SHELL.add_command(
   description: 'Search player by name',
   params: ['<name>']
 ) do |tokens, shell|
-  unless API.connected?
+  unless GAME.connected?
     LOGGER.log(NOT_CONNECTED)
     next
   end
@@ -151,20 +148,10 @@ SHELL.add_command(
   data = API.player_profile_info_by_name(name)
   data = JSON.parse(data)
 
-  if data['player'].nil?
-    LOGGER.log('No such player')
-    next
-  end
-
-  shell.puts(format('%-15s %s', 'ID', data['player']['id']))
-  shell.puts(format('%-15s %s', 'Name', data['player']['name']))
-  shell.puts(format('%-15s %s', 'Coins', data['player']['coins']))
-  shell.puts(format('%-15s %s', 'Experience', data['player']['exp']))
-  shell.puts(format('%-15s %s', 'Glory', data['player']['glory']))
-  shell.puts(format('%-15s %s', 'Stars', data['starsInfo']['totalStarsCount'])) unless data['starsInfo'].nil?
-  shell.puts(format('%-15s %s', 'Dust equipment', data['player']['dust_equipment']))
-  shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
-  shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
+  profile = Printer::Profile.new(data)
+  shell.puts(profile)
+rescue Monolisk::UnknownPlayerNameError
+  LOGGER.log('No such player')
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end

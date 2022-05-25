@@ -28,6 +28,10 @@ module Monolisk
   class InvalidSessionError < RequestError; end
 
   ##
+  # Unknown player name error
+  class UnknownPlayerNameError < RequestError; end
+
+  ##
   # Client
   class Client
     HOST = 'monolisk.appspot.com'
@@ -59,7 +63,8 @@ module Monolisk
 
     EXCEPTION_PREFIX = 'com.tricksterarts.monoliskbackend.exceptions.'
     EXCEPTIONS = {
-      'InvalidSessionException' => InvalidSessionError
+      'InvalidSessionException' => InvalidSessionError,
+      'UnknownPlayerNameException' => UnknownPlayerNameError
     }.freeze
 
     def initialize(
