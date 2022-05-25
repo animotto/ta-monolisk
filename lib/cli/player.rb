@@ -109,3 +109,121 @@ CONTEXT_PLAYER.add_command(
 rescue Monolisk::RequestError => e
   shell.puts(e)
 end
+
+# following
+CONTEXT_PLAYER.add_command(
+  :following,
+  description: 'Show the following list'
+) do |_tokens, shell|
+  unless API.connected?
+    shell.puts(NOT_CONNECTED)
+    next
+  end
+
+  data = API.full_player_info
+  data = JSON.parse(data)
+  data = API.player_followig_list(data['player']['id'])
+  data = JSON.parse(data)
+
+  if data['playerEntries'].empty?
+    shell.puts('The following list is empty')
+    next
+  end
+
+  shell.puts(
+    format(
+      '%-17s %-15s',
+      'ID',
+      'Name'
+    )
+  )
+  data['playerEntries'].each do |player|
+    shell.puts(
+      format(
+        '%-17s %-15s',
+        player['id'],
+        player['name']
+      )
+    )
+  end
+rescue Monolisk::RequestError => e
+  shell.puts(e)
+end
+
+# followers
+CONTEXT_PLAYER.add_command(
+  :followers,
+  description: 'Show the followers list'
+) do |_tokens, shell|
+  unless API.connected?
+    shell.puts(NOT_CONNECTED)
+    next
+  end
+
+  data = API.full_player_info
+  data = JSON.parse(data)
+  data = API.player_followers_list(data['player']['id'])
+  data = JSON.parse(data)
+
+  if data['playerEntries'].empty?
+    shell.puts('The followers list is empty')
+    next
+  end
+
+  shell.puts(
+    format(
+      '%-17s %-15s',
+      'ID',
+      'Name'
+    )
+  )
+  data['playerEntries'].each do |player|
+    shell.puts(
+      format(
+        '%-17s %-15s',
+        player['id'],
+        player['name']
+      )
+    )
+  end
+rescue Monolisk::RequestError => e
+  shell.puts(e)
+end
+
+# follow
+CONTEXT_PLAYER.add_command(
+  :follow,
+  description: 'Add player to the following list',
+  params: ['<id>']
+) do |tokens, shell|
+  unless API.connected?
+    shell.puts(NOT_CONNECTED)
+    next
+  end
+
+  id = tokens[1].to_i
+
+  API.follow_player(id)
+  shell.puts('OK')
+rescue Monolisk::RequestError => e
+  shell.puts(e)
+end
+
+# unfollow
+CONTEXT_PLAYER.add_command(
+  :unfollow,
+  description: 'Remove player from the following list',
+  params: ['<id>']
+) do |tokens, shell|
+  unless API.connected?
+    shell.puts(NOT_CONNECTED)
+    next
+  end
+
+  id = tokens[1].to_i
+
+  API.unfollow_player(id)
+  shell.puts('OK')
+rescue Monolisk::RequestError => e
+  shell.puts(e)
+end

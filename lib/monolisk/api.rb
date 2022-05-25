@@ -195,6 +195,17 @@ module Monolisk
     end
 
     ##
+    # Starts the next dungeon in currently played dungeon chain
+    def start_next_dungeon_currently_played_dungeon_chain(id = @id)
+      @client.request(
+        'start_next_dungeon_in_currently_played_dungeon_chain',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
     # Finishes the dungeon
     def finish_dungeon(owner_id, dungeon_id, details, id = @id)
       @client.request(
@@ -403,6 +414,233 @@ module Monolisk
         id,
         @sid
       )
+    end
+
+    ##
+    # Returns players profile info by name
+    def player_profile_info_by_name(name, id = @id)
+      @client.request(
+        'get_player_profile_info_by_name',
+        {
+          'id_player' => id,
+          'profile_name' => name
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Saves the avatars loadout
+    def save_avatar_loadout(avatar, loadout, id = @id)
+      @client.request(
+        'save_avatar_loadout',
+        {
+          'id_player' => id,
+          'id_avatar' => avatar,
+          'loadout' => loadout
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Saves the avatars passives
+    def save_avatar_passives(avatar, types, levels, id = @id)
+      @client.request(
+        'save_avatar_passives',
+        {
+          'id_player' => id,
+          'id_avatar' => avatar,
+          'passives_type_ids' => types,
+          'passives_levels' => levels
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Claims starter cards reward
+    def claim_starter_cards_reward(card, id = @id)
+      @client.request(
+        'claim_starter_cards_reward',
+        {
+          'id_player' => id,
+          'selected_card' => card
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Purchases cards pack with coins
+    def purchase_cards_pack_with_coins(pack, coins_before, id = @id)
+      @client.request(
+        'purchase_cards_pack_with_coins',
+        {
+          'id_player' => id,
+          'pack_type' => pack,
+          'coins_beofire_purchasing' => coins_before
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Unpacks cards pack
+    def unpack_cards_pack(pack, count_before, id = @id)
+      @client.request(
+        'unpack_cards_pack',
+        {
+          'id_player' => id,
+          'pack_type' => pack,
+          'count_available_before_unpacking' => count_before
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Subscribes using email
+    def subscribe_email(email, language, id = @id)
+      @client.request(
+        'subscribe_using_email',
+        {
+          'id_player' => id,
+          'email' => email,
+          'language' => language
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Sells all equipment duplicates for dust
+    def sell_all_duplicates(id = @id)
+      @client.request(
+        'sell_all_equipment_duplicates_for_dust',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Marks new cards as viewed
+    def mark_new_cards_viewed(cards, id = @id)
+      @client.request(
+        'mark_new_cards_as_viewed',
+        {
+          'id_player' => id,
+          'card_identifiers' => cards
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns a new cross platform code
+    def cross_platform_new_code(id = @id)
+      @client.request(
+        'get_new_cross_platform_connect_code',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns dungeon properties for edit
+    def scene_info_edit_dungeon_properties(dungeon, id = @id)
+      @client.request(
+        'scene_info_edit_dungeon_properties',
+        {
+          'id_player' => id,
+          'id_dungeon' => dungeon
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns a list of players dungeons
+    def player_dungeons(id = @id)
+      @client.request(
+        'list_players_own_dungeons',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns a following list
+    def player_followig_list(player, id = @id)
+      @client.request(
+        'get_players_following_list',
+        {
+          'id_player_asking' => id,
+          'id_player' => player
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns a followers list
+    def player_followers_list(player, id = @id)
+      @client.request(
+        'get_players_followers_list',
+        {
+          'id_player_asking' => id,
+          'id_player' => player
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Adds a player to the following list
+    def follow_player(player, id = @id)
+      @client.request(
+        'follow_player',
+        {
+          'id_player' => id,
+          'id_player_to_follow' => player
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Removes a player from the following list
+    def unfollow_player(player, id = @id)
+      @client.request(
+        'unfollow_player',
+        {
+          'id_player' => id,
+          'id_player_to_unfollow' => player
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Creates a new player
+    def create_player
+      @client.request('create_player')
     end
   end
 end

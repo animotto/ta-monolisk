@@ -67,6 +67,21 @@ rescue Monolisk::RequestError => e
   shell.puts(e)
 end
 
+# new
+SHELL.add_command(
+  :new,
+  description: 'Create a new player'
+) do |_tokens, shell|
+  data = API.create_player
+  data = JSON.parse(data)
+
+  shell.puts(format('%-15s %s', 'ID', data['id']))
+  shell.puts(format('%-15s %s', 'Password', data['password']))
+  shell.puts(format('%-15s %s', 'Session ID', data['sessionId']))
+rescue Monolisk::RequestError => e
+  shell.puts(e)
+end
+
 # info
 SHELL.add_command(
   :info,
@@ -94,6 +109,40 @@ SHELL.add_command(
   shell.puts(format('%-15s %s', 'Experience', data['player']['exp']))
   shell.puts(format('%-15s %s', 'Glory', data['player']['glory']))
   shell.puts(format('%-15s %s', 'Stars', data['starsInfo']['totalStarsCount']))
+  shell.puts(format('%-15s %s', 'Dust equipment', data['player']['dust_equipment']))
+  shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
+  shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
+rescue Monolisk::RequestError => e
+  shell.puts(e)
+end
+
+# search
+SHELL.add_command(
+  :search,
+  description: 'Search player by name',
+  params: ['<name>']
+) do |tokens, shell|
+  unless API.connected?
+    shell.puts(NOT_CONNECTED)
+    next
+  end
+
+  name = tokens[1]
+
+  data = API.player_profile_info_by_name(name)
+  data = JSON.parse(data)
+
+  if data['player'].nil?
+    shell.puts('No such player')
+    next
+  end
+
+  shell.puts(format('%-15s %s', 'ID', data['player']['id']))
+  shell.puts(format('%-15s %s', 'Name', data['player']['name']))
+  shell.puts(format('%-15s %s', 'Coins', data['player']['coins']))
+  shell.puts(format('%-15s %s', 'Experience', data['player']['exp']))
+  shell.puts(format('%-15s %s', 'Glory', data['player']['glory']))
+  shell.puts(format('%-15s %s', 'Stars', data['starsInfo']['totalStarsCount'])) unless data['starsInfo'].nil?
   shell.puts(format('%-15s %s', 'Dust equipment', data['player']['dust_equipment']))
   shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
   shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
