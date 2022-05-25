@@ -10,7 +10,7 @@ CONTEXT_PLAYER.add_command(
   description: 'Profile'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -27,7 +27,7 @@ CONTEXT_PLAYER.add_command(
   shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
   shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # loadouts
@@ -37,7 +37,7 @@ CONTEXT_PLAYER.add_command(
   params: ['<avatar>']
 ) do |tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -48,7 +48,7 @@ CONTEXT_PLAYER.add_command(
 
   key = "av#{avatar}Loadout"
   unless data['loadouts'].key?(key)
-    shell.puts('No such avatar')
+    LOGGER.log('No such avatar')
     next
   end
 
@@ -56,7 +56,7 @@ CONTEXT_PLAYER.add_command(
     shell.puts(card)
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # cards
@@ -65,7 +65,7 @@ CONTEXT_PLAYER.add_command(
   description: 'Cards'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -91,7 +91,7 @@ CONTEXT_PLAYER.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # rename
@@ -99,15 +99,15 @@ CONTEXT_PLAYER.add_command(
   :rename,
   description: 'Rename',
   params: ['<name>']
-) do |tokens, shell|
+) do |tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
-  shell.puts(GAME.api.player_name(tokens[1]))
+  LOGGER.log(GAME.api.player_name(tokens[1]))
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # following
@@ -116,7 +116,7 @@ CONTEXT_PLAYER.add_command(
   description: 'Show the following list'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -126,7 +126,7 @@ CONTEXT_PLAYER.add_command(
   data = JSON.parse(data)
 
   if data['playerEntries'].empty?
-    shell.puts('The following list is empty')
+    LOGGER.log('The following list is empty')
     next
   end
 
@@ -147,7 +147,7 @@ CONTEXT_PLAYER.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # followers
@@ -156,7 +156,7 @@ CONTEXT_PLAYER.add_command(
   description: 'Show the followers list'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -166,7 +166,7 @@ CONTEXT_PLAYER.add_command(
   data = JSON.parse(data)
 
   if data['playerEntries'].empty?
-    shell.puts('The followers list is empty')
+    LOGGER.log('The followers list is empty')
     next
   end
 
@@ -187,7 +187,7 @@ CONTEXT_PLAYER.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # follow
@@ -195,18 +195,18 @@ CONTEXT_PLAYER.add_command(
   :follow,
   description: 'Add player to the following list',
   params: ['<id>']
-) do |tokens, shell|
+) do |tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
   id = tokens[1].to_i
 
   GAME.api.follow_player(id)
-  shell.puts('OK')
+  LOGGER.success('OK')
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # unfollow
@@ -214,16 +214,16 @@ CONTEXT_PLAYER.add_command(
   :unfollow,
   description: 'Remove player from the following list',
   params: ['<id>']
-) do |tokens, shell|
+) do |tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
   id = tokens[1].to_i
 
   GAME.api.unfollow_player(id)
-  shell.puts('OK')
+  LOGGER.success('OK')
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end

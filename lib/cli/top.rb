@@ -10,7 +10,7 @@ CONTEXT_TOP.add_command(
   description: 'Top players by glory'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -40,7 +40,7 @@ CONTEXT_TOP.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # stars
@@ -49,7 +49,7 @@ CONTEXT_TOP.add_command(
   description: 'Top players by stars'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -81,5 +81,5 @@ CONTEXT_TOP.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end

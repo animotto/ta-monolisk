@@ -14,7 +14,7 @@ CONTEXT_DUNGEON.add_command(
   description: 'Show suitable dungeons'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -48,7 +48,7 @@ CONTEXT_DUNGEON.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # newest
@@ -57,7 +57,7 @@ CONTEXT_DUNGEON.add_command(
   description: 'Show newest dungeons'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -91,7 +91,7 @@ CONTEXT_DUNGEON.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # featured
@@ -100,7 +100,7 @@ CONTEXT_DUNGEON.add_command(
   description: 'Show featured dungeons'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -134,7 +134,7 @@ CONTEXT_DUNGEON.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # following
@@ -143,7 +143,7 @@ CONTEXT_DUNGEON.add_command(
   description: 'Show dungeons from players you follow'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -177,7 +177,7 @@ CONTEXT_DUNGEON.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # comments
@@ -187,7 +187,7 @@ CONTEXT_DUNGEON.add_command(
   params: ['<id>']
 ) do |tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -197,7 +197,7 @@ CONTEXT_DUNGEON.add_command(
   data = JSON.parse(data)
 
   if data['dungeonComments'].nil?
-    shell.puts('No comments')
+    LOGGER.log('No comments')
     next
   end
 
@@ -223,7 +223,7 @@ CONTEXT_DUNGEON.add_command(
     shell.puts
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # write
@@ -233,7 +233,7 @@ CONTEXT_DUNGEON.add_command(
   params: ['<owner>', '<id>', '<ver>', '<avatar>', '<text>']
 ) do |tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -268,7 +268,7 @@ CONTEXT_DUNGEON.add_command(
     shell.puts
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # rate
@@ -276,9 +276,9 @@ CONTEXT_DUNGEON.add_command(
   :rate,
   description: 'Rate the dungeon',
   params: ['<owner>', '<id>', '<rating>']
-) do |tokens, shell|
+) do |tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -286,9 +286,9 @@ CONTEXT_DUNGEON.add_command(
   id = tokens[2].to_i
   rating = tokens[3].to_i
 
-  shell.puts(GAME.api.rate_dungeon(owner, id, rating))
+  LOGGER.log(GAME.api.rate_dungeon(owner, id, rating))
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 ## Dungeon chains commands
@@ -299,7 +299,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   description: 'Show suitable dungeon chains'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -329,7 +329,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # newest
@@ -338,7 +338,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   description: 'Show newest dungeon chains'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -368,7 +368,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # featured
@@ -377,7 +377,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   description: 'Show featured dungeon chains'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -407,7 +407,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # later
@@ -416,7 +416,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   description: 'Show dungeon chains marked as "play later"'
 ) do |_tokens, shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -424,7 +424,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   data = JSON.parse(data)
 
   if data['dungeonChains'].empty?
-    shell.puts('No dungeon chains')
+    LOGGER.log('No dungeon chains')
     next
   end
 
@@ -451,22 +451,22 @@ CONTEXT_DUNGEON_CHAIN.add_command(
     )
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # current
 CONTEXT_DUNGEON_CHAIN.add_command(
   :current,
   description: 'Show currently played dungeon chain'
-) do |_tokens, shell|
+) do |_tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
-  shell.puts(GAME.api.currently_played_dungeon_chain)
+  LOGGER.log(GAME.api.currently_played_dungeon_chain)
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # rate
@@ -474,9 +474,9 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   :rate,
   description: 'Rate the dungeon chain',
   params: ['<owner>', '<id>', '<rating>']
-) do |tokens, shell|
+) do |tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -484,7 +484,7 @@ CONTEXT_DUNGEON_CHAIN.add_command(
   id = tokens[2].to_i
   rating = tokens[3].to_i
 
-  shell.puts(GAME.api.rate_dungeon_chain(owner, id, rating))
+  LOGGER.log(GAME.api.rate_dungeon_chain(owner, id, rating))
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end

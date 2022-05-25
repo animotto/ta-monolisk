@@ -2,19 +2,6 @@
 
 require 'json'
 
-GAME_THREAD_STRUCT = Struct.new(:thread, :proc)
-GAME_THREAD = GAME_THREAD_STRUCT.new
-GAME_THREAD.proc = proc do |game, shell|
-  loop do
-    game.check_session
-    sleep(game.app_settings['appSettings']['periodicSessionCheckInterval'])
-  rescue Monolisk::RequestError
-    shell.puts("\e[1;31m[SESSION IS INVALID]\e[0m")
-    game.disconnect
-    break
-  end
-end
-
 ## Contexts
 
 # player
@@ -32,30 +19,30 @@ CONTEXT_TOP = SHELL.add_context(:top, description: 'Top players')
 SHELL.add_command(
   :connect,
   description: 'Authentication by ID and password'
-) do |_tokens, shell|
+) do |_tokens, _shell|
   GAME.connect
-  shell.puts('OK')
+  LOGGER.success('OK')
 
   GAME_THREAD.thread&.kill
   GAME_THREAD.thread = Thread.new do
-    GAME_THREAD.proc.call(GAME, shell)
+    GAME_THREAD.proc.call(GAME, LOGGER)
   end
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # disconnect
 SHELL.add_command(
   :disconnect,
   description: 'Erase the session ID'
-) do |_tokens, shell|
+) do |_tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
   GAME.disconnect
-  shell.puts('OK')
+  LOGGER.success('OK')
 
   GAME_THREAD.thread&.kill
 end
@@ -64,39 +51,39 @@ end
 SHELL.add_command(
   :sid,
   description: 'Show session ID'
-) do |_tokens, shell|
+) do |_tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
-  shell.puts(GAME.api.sid)
+  LOGGER.log(GAME.api.sid)
 end
 
 # check
 SHELL.add_command(
   :check,
   description: 'Check the session'
-) do |_tokens, shell|
+) do |_tokens, _shell|
   unless GAME.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
   GAME.api.check_session
-  shell.puts('OK')
+  LOGGER.success('OK')
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # settings
 SHELL.add_command(
   :settings,
   description: 'Application settings'
-) do |_tokens, shell|
-  shell.puts(GAME.api.app_settings)
+) do |_tokens, _shell|
+  LOGGER.log(GAME.api.app_settings)
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # new
@@ -111,7 +98,7 @@ SHELL.add_command(
   shell.puts(format('%-15s %s', 'Password', data['password']))
   shell.puts(format('%-15s %s', 'Session ID', data['sessionId']))
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # info
@@ -121,7 +108,7 @@ SHELL.add_command(
   params: ['<id>']
 ) do |tokens, shell|
   unless API.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -131,7 +118,7 @@ SHELL.add_command(
   data = JSON.parse(data)
 
   if data['player'].nil?
-    shell.puts('No such player')
+    LOGGER.log('No such player')
     next
   end
 
@@ -145,7 +132,7 @@ SHELL.add_command(
   shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
   shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end
 
 # search
@@ -155,7 +142,7 @@ SHELL.add_command(
   params: ['<name>']
 ) do |tokens, shell|
   unless API.connected?
-    shell.puts(NOT_CONNECTED)
+    LOGGER.log(NOT_CONNECTED)
     next
   end
 
@@ -165,7 +152,7 @@ SHELL.add_command(
   data = JSON.parse(data)
 
   if data['player'].nil?
-    shell.puts('No such player')
+    LOGGER.log('No such player')
     next
   end
 
@@ -179,5 +166,5 @@ SHELL.add_command(
   shell.puts(format('%-15s %s', 'Dust dungeon', data['player']['dust_dungeonCards']))
   shell.puts(format('%-15s %s', 'Tutorial', data['player']['tutorial']))
 rescue Monolisk::RequestError => e
-  shell.puts(e)
+  LOGGER.fail(e)
 end

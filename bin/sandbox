@@ -56,4 +56,6 @@ GAME = Monolisk::Game.new(config['id'], config['password'])
 
 require 'cli'
 
+LOGGER = Logger.new(SHELL)
+
 SHELL.run
