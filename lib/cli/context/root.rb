@@ -13,6 +13,9 @@ CONTEXT_DUNGEON = SHELL.add_context(:dungeon, description: 'Dungeon')
 # top
 CONTEXT_TOP = SHELL.add_context(:top, description: 'Top players')
 
+# script
+CONTEXT_SCRIPT = SHELL.add_context(:script, description: 'Scripts')
+
 ## Commands
 
 # connect
@@ -91,7 +94,7 @@ SHELL.add_command(
   :new,
   description: 'Create a new player'
 ) do |_tokens, shell|
-  data = API.create_player
+  data = GAME.api.create_player
   data = JSON.parse(data)
 
   list = Printer::List.new(
@@ -118,7 +121,7 @@ SHELL.add_command(
 
   id = tokens[1].to_i
 
-  data = API.player_profile_info(id)
+  data = GAME.api.player_profile_info(id)
   data = JSON.parse(data)
 
   if data['player'].nil?
@@ -145,7 +148,7 @@ SHELL.add_command(
 
   name = tokens[1]
 
-  data = API.player_profile_info_by_name(name)
+  data = GAME.api.player_profile_info_by_name(name)
   data = JSON.parse(data)
 
   profile = Printer::Profile.new(data)

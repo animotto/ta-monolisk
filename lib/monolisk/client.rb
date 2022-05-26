@@ -24,6 +24,14 @@ module Monolisk
   end
 
   ##
+  # Invalid id error
+  class InvalidIDError < RequestError; end
+
+  ##
+  # Invalid password error
+  class InvalidPasswordError < RequestError; end
+
+  ##
   # Invalid session error
   class InvalidSessionError < RequestError; end
 
@@ -63,6 +71,8 @@ module Monolisk
 
     EXCEPTION_PREFIX = 'com.tricksterarts.monoliskbackend.exceptions.'
     EXCEPTIONS = {
+      'InvalidIdException' => InvalidIDError,
+      'InvalidPasswordException' => InvalidPasswordError,
       'InvalidSessionException' => InvalidSessionError,
       'UnknownPlayerNameException' => UnknownPlayerNameError
     }.freeze

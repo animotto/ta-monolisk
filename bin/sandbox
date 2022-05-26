@@ -4,8 +4,8 @@
 
 require 'optparse'
 require 'yaml'
-require 'sandbox'
 require 'monolisk'
+require 'sandbox'
 
 DATA_DIR = File.join(Dir.home, '.ta-monolisk')
 CONFIG_DIR = File.join(DATA_DIR, 'configs')
@@ -51,11 +51,12 @@ unless config.key?('id') && config.key?('password')
   exit
 end
 
-API = Monolisk::API.new(config['id'], config['password'])
 GAME = Monolisk::Game.new(config['id'], config['password'])
 
 require 'cli'
 
 LOGGER = Logger.new(SHELL)
+LOGGER.success_prefix = "\u2714 "
+LOGGER.fail_prefix = "\u2718 "
 
 SHELL.run
