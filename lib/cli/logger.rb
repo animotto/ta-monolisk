@@ -3,7 +3,7 @@
 ##
 # Logger
 class Logger
-  attr_accessor :log_prefix, :success_prefix, :fail_prefix
+  attr_accessor :log_prefix, :success_prefix, :fail_prefix, :info_prefix
 
   def initialize(shell)
     @shell = shell
@@ -19,5 +19,9 @@ class Logger
 
   def fail(message)
     @shell.puts("\e[31m#{@fail_prefix}#{message}\e[0m")
+  end
+
+  def info(message)
+    @shell.puts("\e[34m#{@info_prefix}#{message}\e[0m")
   end
 end

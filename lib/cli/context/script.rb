@@ -23,6 +23,7 @@ module Script
       @logger.log_prefix = prefix
       @logger.success_prefix = prefix
       @logger.fail_prefix = prefix
+      @logger.info_prefix = prefix
     end
 
     def start; end
@@ -67,6 +68,7 @@ CONTEXT_SCRIPT.add_command(
     shell.puts(e.backtrace.join("\n"))
     shell.puts(e)
   ensure
+    Script.send(:remove_const, script.class_name) if Script.const_defined?(script.class_name)
     SCRIPTS.jobs.delete_if { |j| j.id == script.id }
   end
 
@@ -108,7 +110,7 @@ CONTEXT_SCRIPT.add_command(
 
     shell.puts(
       Kernel.format(
-        ' [%d] %s -> %s (%s)',
+        ' [%d] %s %s (%s)',
         job.id,
         duration.join(':'),
         job.name,

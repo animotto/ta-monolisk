@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'json'
-
 ## Contexts
 
 # player
@@ -30,6 +28,10 @@ SHELL.add_command(
   GAME_THREAD.thread = Thread.new do
     GAME_THREAD.proc.call(GAME, LOGGER)
   end
+rescue Monolisk::InvalidIDError
+  LOGGER.fail('Invalid ID')
+rescue Monolisk::InvalidPasswordError
+  LOGGER.fail('Invalid password')
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end

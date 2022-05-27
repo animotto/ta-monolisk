@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'json'
-
 ## Contexts
 
 CONTEXT_PLAYER_DUNGEON = CONTEXT_PLAYER.add_context(:dungeon, description: 'Player dungeons')
@@ -79,6 +77,92 @@ rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
 
+# packs
+CONTEXT_PLAYER.add_command(
+  :packs,
+  description: 'Card packs'
+) do |_tokens, shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  data = GAME.api.full_player_info
+  data = JSON.parse(data)
+
+  table = Printer::Table.new(
+    'Card packs',
+    ['Type', 'Amount'],
+    data['ownedPacks'].map { |p| [p['identifier'], p['countAvailable']] }
+  )
+
+  shell.puts(table)
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
+
+# purchase
+CONTEXT_PLAYER.add_command(
+  :purchase,
+  description: 'Purchase a card pack',
+  params: ['<type>']
+) do |tokens, _shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  type = tokens[1].to_i
+
+  player = GAME.api.full_player_info
+  player = JSON.parse(player)
+
+  GAME.api.purchase_cards_pack_with_coins(type, player.dig('player', 'coins'))
+  LOGGER.success('OK')
+rescue Monolisk::NotEnoughCoinsError
+  LOGGER.fail('Not enough coins')
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
+
+# unpack
+CONTEXT_PLAYER.add_command(
+  :unpack,
+  description: 'Unpack card pack',
+  params: ['<type>']
+) do |tokens, shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  type = tokens[1].to_i
+
+  player = GAME.api.full_player_info
+  player = JSON.parse(player)
+
+  pack = player['ownedPacks'].detect { |p| p['identifier'] == type }
+  if pack.nil?
+    LOGGER.fail('Pack type not found')
+    next
+  end
+
+  data = GAME.api.unpack_cards_pack(type, pack['countAvailable'])
+  data = JSON.parse(data)
+
+  table = Printer::Table.new(
+    'Cards',
+    ['ID', 'Amount'],
+    data['cards'].map { |c| [c['identifier'], c['count']] }
+  )
+
+  shell.puts(table)
+rescue Monolisk::NothingToUnpackError
+  LOGGER.fail('Nothing to unpack')
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
+
 # rename
 CONTEXT_PLAYER.add_command(
   :rename,
@@ -90,7 +174,8 @@ CONTEXT_PLAYER.add_command(
     next
   end
 
-  LOGGER.log(GAME.api.player_name(tokens[1]))
+  GAME.api.player_name(tokens[1])
+  LOGGER.success('OK')
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end

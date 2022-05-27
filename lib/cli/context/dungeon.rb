@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'json'
-
 ## Contexts
 
 CONTEXT_DUNGEON_CHAIN = CONTEXT_DUNGEON.add_context(:chain, description: 'Chains')

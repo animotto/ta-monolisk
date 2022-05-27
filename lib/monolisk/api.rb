@@ -4,6 +4,8 @@ module Monolisk
   ##
   # API
   class API
+    attr_reader :client
+
     attr_accessor :sid
 
     def initialize(
@@ -477,7 +479,7 @@ module Monolisk
         {
           'id_player' => id,
           'pack_type' => pack,
-          'coins_beofire_purchasing' => coins_before
+          'coins_before_purchasing' => coins_before
         },
         id,
         @sid

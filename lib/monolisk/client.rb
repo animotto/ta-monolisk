@@ -40,6 +40,22 @@ module Monolisk
   class UnknownPlayerNameError < RequestError; end
 
   ##
+  # Dungeon not found error
+  class DungeonNotFoundError < RequestError; end
+
+  ##
+  # Invalid parameters error
+  class InvalidParametersError < RequestError; end
+
+  ##
+  # Not enough coins error
+  class NotEnoughCoinsError < RequestError; end
+
+  ##
+  # Nothing to unpack error
+  class NothingToUnpackError < RequestError; end
+
+  ##
   # Client
   class Client
     HOST = 'monolisk.appspot.com'
@@ -74,8 +90,14 @@ module Monolisk
       'InvalidIdException' => InvalidIDError,
       'InvalidPasswordException' => InvalidPasswordError,
       'InvalidSessionException' => InvalidSessionError,
-      'UnknownPlayerNameException' => UnknownPlayerNameError
+      'UnknownPlayerNameException' => UnknownPlayerNameError,
+      'PublishedDungeonNotFoundException' => DungeonNotFoundError,
+      'InvalidParametersException' => InvalidParametersError,
+      'NotEnoughCoinsException' => NotEnoughCoinsError,
+      'NothingToUnpackException' => NothingToUnpackError
     }.freeze
+
+    attr_reader :host, :port, :ssl, :path, :platform, :version, :amount
 
     def initialize(
       host: HOST,
@@ -139,10 +161,13 @@ module Monolisk
         end
 
         unless response.instance_of?(Net::HTTPOK)
-          response.body =~ /^#{EXCEPTION_PREFIX}(\w+)/
-          exception = Regexp.last_match[1]
+          if response.body =~ /^#{EXCEPTION_PREFIX}(\w+)/
+            exception = Regexp.last_match[1]
 
-          raise EXCEPTIONS.fetch(exception, RequestError).new(response.body, query, response.code)
+            raise EXCEPTIONS.fetch(exception, RequestError).new(response.body, query, response.code)
+          end
+
+          raise RequestError.new(response.body, query, response.code)
         end
 
         return response.body
