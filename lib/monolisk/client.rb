@@ -160,6 +160,8 @@ module Monolisk
           raise RequestError.new(e.class.to_s, query)
         end
 
+        response.body.force_encoding('UTF-8')
+
         unless response.instance_of?(Net::HTTPOK)
           if response.body =~ /^#{EXCEPTION_PREFIX}(\w+)/
             exception = Regexp.last_match[1]

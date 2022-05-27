@@ -63,7 +63,7 @@ CONTEXT_PLAYER.add_command(
   :discard,
   description: 'Discard the goal',
   params: ['<type>']
-) do |tokens, shell|
+) do |tokens, _shell|
   unless GAME.connected?
     LOGGER.log(NOT_CONNECTED)
     next
@@ -71,7 +71,7 @@ CONTEXT_PLAYER.add_command(
 
   type = tokens[1].to_i
 
-  data = GAME.api.discard_daily_goal(type)
+  GAME.api.discard_daily_goal(type)
   LOGGER.success('OK')
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)

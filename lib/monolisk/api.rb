@@ -638,5 +638,146 @@ module Monolisk
     def create_player
       @client.request('create_player')
     end
+
+    ##
+    # Returns language localizations
+    def localizations(language)
+      @client.request(
+        'get_localizations',
+        { 'language' => language }
+      )
+    end
+
+    ##
+    # Returns card properties of body equipment
+    def ccgi_properties_body
+      @client.request('get_all_ccgi_properties_of_type_body_equipment')
+    end
+
+    ##
+    # Returns card properties of hands equipment
+    def ccgi_properties_hands
+      @client.request('get_all_ccgi_properties_of_type_hands_equipment')
+    end
+
+    ##
+    # Returns card properties of head equipment
+    def ccgi_properties_head
+      @client.request('get_all_ccgi_properties_of_type_head_equipment')
+    end
+
+    ##
+    # Returns card properties of legs equipment
+    def ccgi_properties_legs
+      @client.request('get_all_ccgi_properties_of_type_legs_equipment')
+    end
+
+    ##
+    # Returns card properties of neck equipment
+    def ccgi_properties_neck
+      @client.request('get_all_ccgi_properties_of_type_neck_equipment')
+    end
+
+    ##
+    # Returns card properties of primary equipment
+    def ccgi_properties_primary
+      @client.request('get_all_ccgi_properties_of_type_primary_equipment')
+    end
+
+    ##
+    # Returns card properties of secondary equipment
+    def ccgi_properties_secondary
+      @client.request('get_all_ccgi_properties_of_type_secondary_equipment')
+    end
+
+    ##
+    # Returns card properties of shoulders equipment
+    def ccgi_properties_shoulders
+      @client.request('get_all_ccgi_properties_of_type_shoulders_equipment')
+    end
+
+    ##
+    # Returns card properties of special ability
+    def ccgi_properties_special_ability
+      @client.request('get_all_ccgi_properties_of_type_special_ability')
+    end
+
+    ##
+    # Returns card properties of movement skill
+    def ccgi_properties_movement_skill
+      @client.request('get_all_ccgi_properties_of_type_movement_skill')
+    end
+
+    ##
+    # Returns card properties of dungeon shardstone
+    def ccgi_properties_dungeon_shardstone
+      @client.request('get_all_ccgi_properties_of_type_dungeon_shardstone')
+    end
+
+    ##
+    # Returns card properties of dungeon skin
+    def ccgi_properties_dungeon_skin
+      @client.request('get_all_ccgi_properties_of_type_dungeon_skin')
+    end
+
+    ##
+    # Returns card properties of unit
+    def ccgi_properties_unit
+      @client.request('get_all_ccgi_properties_of_type_unit')
+    end
+
+    ##
+    # Returns special effect properties
+    def special_effect_properties
+      @client.request('get_all_general_special_effect_properties')
+    end
+
+    ##
+    # Returns the current season info
+    def season_info
+      @client.request('get_season_info')
+    end
+
+    ##
+    # Returns seasonal ranking settings
+    def seasonal_ranking_settings
+      @client.request('get_seasonal_ranking_settings')
+    end
+
+    ##
+    # Returns seasonal challenge types
+    def seasonal_challenge_types
+      @client.request('get_seasonal_challenge_types')
+    end
+
+    ##
+    # Returns conversion tables
+    def conversion_tables
+      @client.request('get_conversion_tables')
+    end
+
+    ##
+    # Returns daily goal types
+    def daily_goal_types
+      @client.request('get_daily_goal_types')
+    end
+
+    ##
+    # Returns hints
+    def hints
+      @client.request('get_hints')
+    end
+
+    ##
+    # Returns crafting settings
+    def crafting_settings
+      @client.request('get_crafting_settings')
+    end
+
+    ##
+    # Returns avatars progress and passives settings
+    def avatars_progress_passives_settings
+      @client.request('get_avatars_progress_and_passives_settings')
+    end
   end
 end
