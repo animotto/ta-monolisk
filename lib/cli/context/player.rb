@@ -24,6 +24,97 @@ rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
 
+# goals
+CONTEXT_PLAYER.add_command(
+  :goals,
+  description: 'Goals'
+) do |_tokens, shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  data = GAME.api.full_player_info
+  data = JSON.parse(data)
+
+  goals = []
+  3.times do |i|
+    goal = "goal#{i + 1}"
+    goals << [
+      data.dig('dailyGoals', "#{goal}Type"),
+      data.dig('dailyGoals', "#{goal}Record"),
+      data.dig('dailyGoals', "#{goal}Timer")
+    ]
+  end
+
+  table = Printer::Table.new(
+    'Goals',
+    ['Type', 'Record', 'Timer'],
+    goals
+  )
+
+  shell.puts(table)
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
+
+# discard
+CONTEXT_PLAYER.add_command(
+  :discard,
+  description: 'Discard the goal',
+  params: ['<type>']
+) do |tokens, shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  type = tokens[1].to_i
+
+  data = GAME.api.discard_daily_goal(type)
+  LOGGER.success('OK')
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
+
+# avatars
+CONTEXT_PLAYER.add_command(
+  :avatars,
+  description: 'Avatars'
+) do |_tokens, shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  data = GAME.api.full_player_info
+  data = JSON.parse(data)
+
+  if data.dig('player', 'avatarsProgress').nil?
+    LOGGER.log('No avatars progress')
+    next
+  end
+
+  avatars = []
+  5.times do |i|
+    avatars << [
+      i + 1,
+      data.dig('player', 'avatarsProgress', 'skillPoints')[i],
+      data.dig('player', 'avatarsProgress', 'gloryNow')[i]
+    ]
+  end
+
+  table = Printer::Table.new(
+    'Avatars',
+    ['ID', 'Skills', 'Glory'],
+    avatars
+  )
+
+  shell.puts(table)
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
+
 # loadouts
 CONTEXT_PLAYER.add_command(
   :loadout,
@@ -159,6 +250,22 @@ CONTEXT_PLAYER.add_command(
   shell.puts(table)
 rescue Monolisk::NothingToUnpackError
   LOGGER.fail('Nothing to unpack')
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
+
+# sell
+CONTEXT_PLAYER.add_command(
+  :sell,
+  description: 'Sell all duplicates'
+) do |_tokens, _shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  GAME.api.sell_all_duplicates
+  LOGGER.success('OK')
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
