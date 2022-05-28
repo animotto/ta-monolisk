@@ -19,10 +19,11 @@ CONTEXT_SCRIPT = SHELL.add_context(:script, description: 'Scripts')
 # connect
 SHELL.add_command(
   :connect,
-  description: 'Authentication by ID and password'
+  description: 'Connect'
 ) do |_tokens, _shell|
-  GAME.connect
-  LOGGER.success('OK')
+  GAME.connect do |request|
+    LOGGER.success(request)
+  end
 
   GAME_THREAD.thread&.kill
   GAME_THREAD.thread = Thread.new do

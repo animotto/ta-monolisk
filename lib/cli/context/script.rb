@@ -102,8 +102,7 @@ CONTEXT_SCRIPT.add_command(
   SCRIPTS.jobs.each do |job|
     time = (Time.now - job.datetime).to_i
     duration = []
-    duration << (time / 60 / 60 / 24)
-    duration << (time / 60 / 60 % 24)
+    duration << (time / 60 / 60)
     duration << (time / 60 % 60)
     duration << (time % 60)
     duration.map! { |d| Kernel.format('%02d', d) }

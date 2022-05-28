@@ -40,16 +40,22 @@ CONTEXT_PLAYER.add_command(
   goals = []
   3.times do |i|
     goal = "goal#{i + 1}"
+    type = data.dig('dailyGoals', "#{goal}Type")
+    goal_type = GAME.goal_types['allDailyGoalDetails'].detect { |g| g['type'] == type }
+    record = data.dig('dailyGoals', "#{goal}Record")
+    record = [record, goal_type['targetValue']].join(' / ')
     goals << [
-      data.dig('dailyGoals', "#{goal}Type"),
-      data.dig('dailyGoals', "#{goal}Record"),
-      data.dig('dailyGoals', "#{goal}Timer")
+      type,
+      goal_type['typeName'],
+      record,
+      data.dig('dailyGoals', "#{goal}Timer"),
+      goal_type['coinsReward']
     ]
   end
 
   table = Printer::Table.new(
     'Goals',
-    ['Type', 'Record', 'Timer'],
+    ['Type', 'Name', 'Record', 'Timer', 'Coins'],
     goals
   )
 

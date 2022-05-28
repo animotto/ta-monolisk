@@ -8,7 +8,7 @@ module Monolisk
   class Game
     LANGAUGE = 'EN'
 
-    attr_reader :id, :password, :api, :app_settings
+    attr_reader :id, :password, :api, :app_settings, :goal_types
 
     def initialize(
       id,
@@ -48,11 +48,16 @@ module Monolisk
     def connect
       @app_settings = @api.app_settings
       @app_settings = JSON.parse(@app_settings)
+      yield('Application settings') if block_given?
+
+      @goal_types = @api.daily_goal_types
+      @goal_types = JSON.parse(@goal_types)
+      yield('Daily goal types') if block_given?
 
       data = @api.login(@language, @id, @password)
       data = JSON.parse(data)
-
       @api.sid = data['sessionId']
+      yield('Login') if block_given?
     end
 
     ##
