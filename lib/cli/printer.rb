@@ -30,10 +30,11 @@ module Printer
   ##
   # Table
   class Table
-    def initialize(header, titles, items)
+    def initialize(header, titles, items, selected = [])
       @header = header
       @titles = titles
       @items = items
+      @selected = selected
 
       @items.each do |item|
         raise ArgumentError, 'The length of the title and item arrays is not equal' if @titles.length != item.length
@@ -60,15 +61,17 @@ module Printer
       end
       table << titles.join(' ').prepend('  ')
 
-      @items.each do |item|
+      @items.each.with_index do |item, i|
         row = []
-        item.each_with_index do |col, i|
+        item.each_with_index do |col, j|
           row << Kernel.format(
-            "%-#{column_length[i]}s",
+            "%-#{column_length[j]}s",
             col
           )
         end
-        table << row.join(' ').prepend('  ')
+        row = row.join(' ').prepend('  ')
+        row = "\e[37;45m#{row}\e[0m" if @selected.include?(i)
+        table << row
       end
 
       table.join("\n")
