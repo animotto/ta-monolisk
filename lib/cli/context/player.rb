@@ -18,6 +18,14 @@ CONTEXT_PLAYER.add_command(
 
   data = GAME.api.full_player_info
   data = JSON.parse(data)
+
+  data['player']['level'] = 0
+  GAME.conversion_tables['levelToExpTable'].each_with_index do |exp, i|
+    break if data.dig('player', 'exp') < exp
+
+    data['player']['level'] = i
+  end
+
   profile = Printer::Profile.new(data)
   shell.puts(profile)
 rescue Monolisk::RequestError => e

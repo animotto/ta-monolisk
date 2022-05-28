@@ -8,7 +8,8 @@ module Monolisk
   class Game
     LANGAUGE = 'EN'
 
-    attr_reader :id, :password, :api, :app_settings, :goal_types
+    attr_reader :id, :password, :api, :app_settings, :goal_types,
+                :conversion_tables
 
     def initialize(
       id,
@@ -44,11 +45,15 @@ module Monolisk
     end
 
     ##
-    # Authenticates by id/password and saves the session id
+    # Gets metadata, authenticates by id/password and saves the session id
     def connect
       @app_settings = @api.app_settings
       @app_settings = JSON.parse(@app_settings)
       yield('Application settings') if block_given?
+
+      @conversion_tables = @api.conversion_tables
+      @conversion_tables = JSON.parse(@conversion_tables)
+      yield('Conversion tables') if block_given?
 
       @goal_types = @api.daily_goal_types
       @goal_types = JSON.parse(@goal_types)
