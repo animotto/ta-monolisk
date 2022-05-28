@@ -51,6 +51,55 @@ module Monolisk
     end
 
     ##
+    # Tries logging in using a login service
+    def login_service(service, payload)
+      @client.request(
+        'attempt_logging_in_using_login_service',
+        {
+          'service' => service,
+          'service_payload' => payload
+        }
+      )
+    end
+
+    ##
+    # Links login service
+    def link_login_service(service, payload, id = @id)
+      @client.request(
+        'link_login_service',
+        {
+          'service' => service,
+          'service_payload' => payload
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Adds push notifications token
+    def add_push_notifications_token(platform, token, id = @id)
+      @client.request(
+        'add_push_notifications_token',
+        {
+          'notif_platform' => platform,
+          'token' => token
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns a player id by name
+    def player_id_from_name(name)
+      @client.request(
+        'get_player_id_from_name',
+        { 'name' => name }
+      )
+    end
+
+    ##
     # Returns player info
     def full_player_info(id = @id)
       @client.request(
@@ -78,6 +127,21 @@ module Monolisk
       @client.request(
         'get_twitch_info',
         {},
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Sets player tutorial phase
+    def tutorial_phase(tutorial, coins, id = @id)
+      @client.request(
+        'set_player_tutorial_phase',
+        {
+          'tut_phase' => tutorial,
+          'coins_collected' => coins,
+          'id_player' => id
+        },
         id,
         @sid
       )
@@ -169,6 +233,21 @@ module Monolisk
           'id_player' => id,
           'id_dungeon_owner' => owner_id,
           'id_dungeon' => dungeon_id
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Starts a random dungeon
+    def start_random_dungeon(prev_owner_id, prev_dungeon_id, id = @id)
+      @client.request(
+        'start_random_dungeon',
+        {
+          'id_player' => id,
+          'id_previous_dungeon_owner' => prev_owner_id,
+          'id_previous_dungeon' => prev_dungeon_id
         },
         id,
         @sid
@@ -324,6 +403,21 @@ module Monolisk
     end
 
     ##
+    # Returns dungeon chain comments
+    def dungeon_chain_comments(owner_id, dungeon_chain_id, id = @id)
+      @client.request(
+        'get_dungeon_chain_comments',
+        {
+          'id_player' => id,
+          'id_dungeon_chain_owner' => owner_id,
+          'id_dungeon_chain' => dungeon_chain_id
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
     # Adds a comment to the dungeon
     def add_dungeon_comment(
       owner_id,
@@ -340,6 +434,29 @@ module Monolisk
           'id_dungeon_owner' => owner_id,
           'id_dungeon' => dungeon_id,
           'dungeon_version' => dungeon_version,
+          'used_avatar' => used_avatar,
+          'comment_text' => comment
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Adds a comment to the dungeon chain
+    def add_dungeon_chain_comment(
+      owner_id,
+      dungeon_chain_id,
+      used_avatar,
+      comment,
+      id = @id
+    )
+      @client.request(
+        'add_dungeon_chain_comment',
+        {
+          'id_player' => id,
+          'id_dungeon_chain_owner' => owner_id,
+          'id_dungeon_chain' => dungeon_chain_id,
           'used_avatar' => used_avatar,
           'comment_text' => comment
         },
@@ -487,6 +604,21 @@ module Monolisk
     end
 
     ##
+    # Purchases a card with dust
+    def purchase_card_with_dust(card, count, id = @id)
+      @client.request(
+        'purchase_card_with_dust',
+        {
+          'id_player' => id,
+          'card_identifier' => card,
+          'new_card_count' => count
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
     # Unpacks cards pack
     def unpack_cards_pack(pack, count_before, id = @id)
       @client.request(
@@ -547,20 +679,6 @@ module Monolisk
       @client.request(
         'get_new_cross_platform_connect_code',
         { 'id_player' => id },
-        id,
-        @sid
-      )
-    end
-
-    ##
-    # Returns dungeon properties for edit
-    def scene_info_edit_dungeon_properties(dungeon, id = @id)
-      @client.request(
-        'scene_info_edit_dungeon_properties',
-        {
-          'id_player' => id,
-          'id_dungeon' => dungeon
-        },
         id,
         @sid
       )
@@ -778,6 +896,111 @@ module Monolisk
     # Returns avatars progress and passives settings
     def avatars_progress_passives_settings
       @client.request('get_avatars_progress_and_passives_settings')
+    end
+
+    ##
+    # Returns available skins and shardstones to create a new dungeon
+    def scene_info_create_dungeon(id = @id)
+      @client.request(
+        'scene_info_create_new_dungeon',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns dungeon properties for edit
+    def scene_info_edit_dungeon_properties(dungeon, id = @id)
+      @client.request(
+        'scene_info_edit_dungeon_properties',
+        {
+          'id_player' => id,
+          'id_dungeon' => dungeon
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Creates a new dungeon
+    def create_dungeon(name, skin, shardstone, language, id = @id)
+      @client.request(
+        'create_new_dungeon',
+        {
+          'id_player' => id,
+          'name' => name,
+          'skin' => skin,
+          'shardstone' => shardstone,
+          'language' => language
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns a dungeon for editing
+    def dungeon_for_editing(dungeon, id = @id)
+      @client.request(
+        'get_dungeon_for_editing',
+        {
+          'id_player' => id,
+          'id_dungeon' => dungeon
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Sets under construction dungeon content
+    def dungeon_content_under_construction(dungeon, content, placement_price, difficulty, language, id = @id)
+      @client.request(
+        'set_under_construction_dungeon_content',
+        {
+          'id_player' => id,
+          'id_dungeon' => dungeon,
+          'serialized_dungeon' => content,
+          'placement_price_sum' => placement_price,
+          'difficulty' => difficulty,
+          'language' => language
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Returns a dungeon for testing
+    def dungeon_for_testing(dungeon, prefer_published, id = @id)
+      @client.request(
+        'get_dungeon_for_testing',
+        {
+          'id_player' => id,
+          'id_dungeon' => dungeon,
+          'prefer_published' => prefer_published
+        },
+        id,
+        @sid
+      )
+    end
+
+    ##
+    # Publishes dungeon
+    def dungeon_ready_to_publish(dungeon, publish_now, details, id = @id)
+      @client.request(
+        'dungeon_ready_to_publish',
+        {
+          'id_player' => id,
+          'id_dungeon' => dungeon,
+          'publish_now' => publish_now,
+          'playthrough_details' => details
+        },
+        id,
+        @sid
+      )
     end
   end
 end
