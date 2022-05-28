@@ -9,7 +9,7 @@ module Monolisk
     LANGAUGE = 'EN'
 
     attr_reader :id, :password, :api, :app_settings, :goal_types,
-                :conversion_tables
+                :conversion_tables, :passives_settings
 
     def initialize(
       id,
@@ -58,6 +58,10 @@ module Monolisk
       @goal_types = @api.daily_goal_types
       @goal_types = JSON.parse(@goal_types)
       yield('Daily goal types') if block_given?
+
+      @passives_settings = @api.avatars_progress_passives_settings
+      @passives_settings = JSON.parse(@passives_settings)
+      yield('Passives settings') if block_given?
 
       data = @api.login(@language, @id, @password)
       data = JSON.parse(data)

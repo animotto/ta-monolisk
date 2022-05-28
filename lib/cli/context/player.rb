@@ -91,10 +91,10 @@ rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
 
-# avatars
+# passives
 CONTEXT_PLAYER.add_command(
-  :avatars,
-  description: 'Avatars'
+  :passives,
+  description: 'Passive abilities'
 ) do |_tokens, shell|
   unless GAME.connected?
     LOGGER.log(NOT_CONNECTED)
@@ -111,16 +111,19 @@ CONTEXT_PLAYER.add_command(
 
   avatars = []
   5.times do |i|
+    skill_points = data.dig('player', 'avatarsProgress', 'skillPoints')[i]
+    glory_now = data.dig('player', 'avatarsProgress', 'gloryNow')[i]
+    glory_next = GAME.passives_settings['gloryNeededForNextSkillPoint'][skill_points]
     avatars << [
       i + 1,
-      data.dig('player', 'avatarsProgress', 'skillPoints')[i],
-      data.dig('player', 'avatarsProgress', 'gloryNow')[i]
+      skill_points,
+      "#{glory_now} / #{glory_next}"
     ]
   end
 
   table = Printer::Table.new(
-    'Avatars',
-    ['ID', 'Skills', 'Glory'],
+    'Passive abilities',
+    ['ID', 'Points', 'Progress'],
     avatars
   )
 
