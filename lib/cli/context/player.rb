@@ -94,8 +94,9 @@ end
 # passives
 CONTEXT_PLAYER.add_command(
   :passives,
-  description: 'Passive abilities'
-) do |_tokens, shell|
+  description: 'Passive abilities',
+  params: ['[avatar]']
+) do |tokens, shell|
   unless GAME.connected?
     LOGGER.log(NOT_CONNECTED)
     next
@@ -103,6 +104,35 @@ CONTEXT_PLAYER.add_command(
 
   data = GAME.api.full_player_info
   data = JSON.parse(data)
+
+  unless tokens[1].nil?
+    avatar = tokens[1].to_i
+    key = "av#{avatar}Passives"
+    passives = data.dig('loadouts', key, 'passives')
+    unless passives
+      shell.puts('No such avatar')
+      next
+    end
+
+    titles = []
+    GAME.passives_settings['allAvatarsPassivesDetails'].each do |passive|
+      titles[passive['typeId'] - 1] = passive['typeName']
+    end
+
+    items = Array.new(titles.length, '-')
+    passives.each do |passive|
+      items[passive['item1'] - 1] = passive['item2']
+    end
+
+    list = Printer::List.new(
+      'Passive abilities',
+      titles,
+      items
+    )
+
+    shell.puts(list)
+    next
+  end
 
   if data.dig('player', 'avatarsProgress').nil?
     LOGGER.log('No avatars progress')
