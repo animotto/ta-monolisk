@@ -22,11 +22,66 @@ options = {}
 parser = OptionParser.new do |opts|
   opts.banner = BANNER
   opts.on('-c CONFIG', 'Run with config')
+  opts.on('-n CONFIG', 'Create a new player config')
+  opts.on('-d CONFIG', 'Delete config')
+  opts.on('-l', 'List configs')
 end
+
 begin
   parser.parse!(into: options)
-rescue OptionParser::MissingArgument => e
+rescue OptionParser::MissingArgument, OptionParser::InvalidOption => e
   SHELL.puts(e)
+  exit
+end
+
+Dir.mkdir(DATA_DIR) unless Dir.exist?(DATA_DIR)
+Dir.mkdir(CONFIG_DIR) unless Dir.exist?(CONFIG_DIR)
+
+if options.key?(:n)
+  config_file = File.join(CONFIG_DIR, [options[:n], CONFIG_EXT].join('.'))
+
+  if File.file?(config_file)
+    SHELL.puts("Config #{options[:n]} already exists")
+    exit
+  end
+
+  game = Monolisk::Game.new
+  data = game.api.create_player
+  data = JSON.parse(data)
+  config = {
+    'id' => data['id'],
+    'password' => data['password']
+  }
+
+  File.write(config_file, YAML.dump(config))
+  SHELL.puts("Config #{options[:n]} has been created (#{config['id']})")
+
+  exit
+end
+
+if options.key?(:d)
+  config_file = File.join(CONFIG_DIR, [options[:d], CONFIG_EXT].join('.'))
+
+  unless File.file?(config_file)
+    SHELL.puts("Config #{options[:d]} doesn't exist")
+    exit
+  end
+
+  File.unlink(config_file)
+  SHELL.puts("Config #{options[:d]} has been deleted")
+
+  exit
+end
+
+if options.key?(:l)
+  Dir.children(CONFIG_DIR).sort.each do |child|
+    config_file = File.join(CONFIG_DIR, child)
+    config_ext = ".#{CONFIG_EXT}"
+    next unless child.end_with?(config_ext) && File.file?(config_file)
+
+    SHELL.puts(child.delete_suffix(config_ext))
+  end
+
   exit
 end
 
@@ -34,9 +89,6 @@ unless options.key?(:c)
   SHELL.puts(parser.help)
   exit
 end
-
-Dir.mkdir(DATA_DIR) unless Dir.exist?(DATA_DIR)
-Dir.mkdir(CONFIG_DIR) unless Dir.exist?(CONFIG_DIR)
 
 config_file = File.join(CONFIG_DIR, [options[:c], CONFIG_EXT].join('.'))
 unless File.file?(config_file)

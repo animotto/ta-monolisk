@@ -12,8 +12,8 @@ module Monolisk
                 :conversion_tables, :passives_settings
 
     def initialize(
-      id,
-      password,
+      id = nil,
+      password = nil,
       host: Client::HOST,
       port: Client::PORT,
       ssl: Client::SSL,
