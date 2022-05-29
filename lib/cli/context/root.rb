@@ -134,6 +134,13 @@ SHELL.add_command(
 
   profile = Printer::Profile.new(data)
   shell.puts(profile)
+
+  next if data['createdDungeons'].empty?
+
+  shell.puts
+
+  dungeons = Printer::Dungeons.new(data['createdDungeons'])
+  shell.puts(dungeons)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -156,6 +163,13 @@ SHELL.add_command(
 
   profile = Printer::Profile.new(data)
   shell.puts(profile)
+
+  next if data['createdDungeons'].empty?
+
+  shell.puts
+
+  dungeons = Printer::Dungeons.new(data['createdDungeons'])
+  shell.puts(dungeons)
 rescue Monolisk::UnknownPlayerNameError
   LOGGER.log('No such player')
 rescue Monolisk::RequestError => e
