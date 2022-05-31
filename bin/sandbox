@@ -111,5 +111,6 @@ LOGGER = Logger.new(SHELL)
 LOGGER.success_prefix = "\u2714 "
 LOGGER.fail_prefix = "\u2718 "
 LOGGER.info_prefix = "\u261b "
+LOGGER.warning_prefix = "\u2618 "
 
 SHELL.run

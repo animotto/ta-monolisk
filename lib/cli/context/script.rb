@@ -24,6 +24,7 @@ module Script
       @logger.success_prefix = prefix
       @logger.fail_prefix = prefix
       @logger.info_prefix = prefix
+      @logger.warning_prefix = prefix
     end
 
     def start; end
@@ -50,7 +51,14 @@ CONTEXT_SCRIPT.add_command(
   script_const = ['Job', SCRIPTS.counter].join
   script = Script.const_set(script_const, Script::Base)
   script_instance = script.new(shell, GAME, SCRIPTS.counter, script_name, tokens[2..])
-  script_instance.instance_eval(File.read(script_file))
+
+  begin
+    script_instance.instance_eval(File.read(script_file))
+  rescue Exception => e
+    shell.puts(e.backtrace.join("\n"))
+    shell.puts(e)
+  end
+
   SCRIPTS.jobs << SCRIPTS_JOB_STRUCT.new(
     SCRIPTS.counter,
     nil,
