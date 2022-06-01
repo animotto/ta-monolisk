@@ -54,7 +54,7 @@ CONTEXT_SCRIPT.add_command(
 
   begin
     script_instance.instance_eval(File.read(script_file))
-  rescue Exception => e
+  rescue StandardError, SyntaxError => e
     shell.puts(e.backtrace.join("\n"))
     shell.puts(e)
   end

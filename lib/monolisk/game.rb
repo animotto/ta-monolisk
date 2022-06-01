@@ -36,6 +36,11 @@ module Monolisk
         platform: platform,
         version: version
       )
+
+      @app_settings = Metadata::AppSettings.new(@api)
+      @conversion_tables = Metadata::ConversionTables.new(@api)
+      @goal_types = Metadata::GoalTypes.new(@api)
+      @passives_settings = Metadata::PassivesSettings.new(@api)
     end
 
     ##
@@ -47,20 +52,16 @@ module Monolisk
     ##
     # Gets metadata, authenticates by id/password and saves the session id
     def connect
-      @app_settings = @api.app_settings
-      @app_settings = JSON.parse(@app_settings)
+      @app_settings.load
       yield('Application settings') if block_given?
 
-      @conversion_tables = @api.conversion_tables
-      @conversion_tables = JSON.parse(@conversion_tables)
+      @conversion_tables.load
       yield('Conversion tables') if block_given?
 
-      @goal_types = @api.daily_goal_types
-      @goal_types = JSON.parse(@goal_types)
+      @goal_types.load
       yield('Daily goal types') if block_given?
 
-      @passives_settings = @api.avatars_progress_passives_settings
-      @passives_settings = JSON.parse(@passives_settings)
+      @passives_settings.load
       yield('Passives settings') if block_given?
 
       data = @api.login(@language, @id, @password)

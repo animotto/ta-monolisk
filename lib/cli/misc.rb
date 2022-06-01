@@ -15,6 +15,6 @@ GAME_THREAD.proc = proc do |game, logger|
     break
   rescue Monolisk::RequestError
   ensure
-    sleep(game.app_settings['appSettings']['periodicSessionCheckInterval'])
+    sleep(game.app_settings.get('periodicSessionCheckInterval'))
   end
 end

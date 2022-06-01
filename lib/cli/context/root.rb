@@ -86,8 +86,19 @@ end
 SHELL.add_command(
   :settings,
   description: 'Application settings'
-) do |_tokens, _shell|
-  LOGGER.log(GAME.api.app_settings)
+) do |_tokens, shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  list = Printer::List.new(
+    'Application settings',
+    GAME.app_settings.map(&:key),
+    GAME.app_settings.map(&:value)
+  )
+
+  shell.puts(list)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -132,6 +143,8 @@ SHELL.add_command(
     next
   end
 
+  data['player']['level'] = GAME.conversion_tables.exp_to_level(data.dig('player', 'exp'))
+
   profile = Printer::Profile.new(data)
   shell.puts(profile)
 
@@ -160,6 +173,8 @@ SHELL.add_command(
 
   data = GAME.api.player_profile_info_by_name(name)
   data = JSON.parse(data)
+
+  data['player']['level'] = GAME.conversion_tables.exp_to_level(data.dig('player', 'exp'))
 
   profile = Printer::Profile.new(data)
   shell.puts(profile)

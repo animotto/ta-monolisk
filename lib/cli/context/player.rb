@@ -19,12 +19,7 @@ CONTEXT_PLAYER.add_command(
   data = GAME.api.full_player_info
   data = JSON.parse(data)
 
-  data['player']['level'] = 0
-  GAME.conversion_tables['levelToExpTable'].each_with_index do |exp, i|
-    break if data.dig('player', 'exp') < exp
-
-    data['player']['level'] = i
-  end
+  data['player']['level'] = GAME.conversion_tables.exp_to_level(data.dig('player', 'exp'))
 
   profile = Printer::Profile.new(data)
   shell.puts(profile)
@@ -49,15 +44,15 @@ CONTEXT_PLAYER.add_command(
   3.times do |i|
     goal = "goal#{i + 1}"
     type = data.dig('dailyGoals', "#{goal}Type")
-    goal_type = GAME.goal_types['allDailyGoalDetails'].detect { |g| g['type'] == type }
+    goal_type = GAME.goal_types.get(type)
     record = data.dig('dailyGoals', "#{goal}Record")
-    record = [record, goal_type['targetValue']].join(' / ')
+    record = [record, goal_type.target].join(' / ')
     goals << [
       type,
-      goal_type['typeName'],
+      goal_type.name,
       record,
       data.dig('dailyGoals', "#{goal}Timer"),
-      goal_type['coinsReward']
+      goal_type.reward
     ]
   end
 
@@ -115,8 +110,8 @@ CONTEXT_PLAYER.add_command(
     end
 
     titles = []
-    GAME.passives_settings['allAvatarsPassivesDetails'].each do |passive|
-      titles[passive['typeId'] - 1] = passive['typeName']
+    GAME.passives_settings.each do |passive|
+      titles[passive.type - 1] = passive.name
     end
 
     items = Array.new(titles.length, '-')
@@ -143,7 +138,7 @@ CONTEXT_PLAYER.add_command(
   5.times do |i|
     skill_points = data.dig('player', 'avatarsProgress', 'skillPoints')[i]
     glory_now = data.dig('player', 'avatarsProgress', 'gloryNow')[i]
-    glory_next = GAME.passives_settings['gloryNeededForNextSkillPoint'][skill_points]
+    glory_next = GAME.passives_settings.glory_for_next_skill_point(skill_points)
     avatars << [
       i + 1,
       skill_points,
