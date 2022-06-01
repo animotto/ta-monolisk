@@ -28,9 +28,9 @@ def start
       players << "#{player['name']} takes #{i + 1} place (+#{player['glory'] - prev['glory']})"
     end
 
-    top = data
     next if players.empty?
 
+    top = data
     @logger.warning(players.join(', '))
   rescue Monolisk::RequestError => e
     @logger.fail(e)
