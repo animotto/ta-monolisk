@@ -112,7 +112,7 @@ module Printer
           @data.dig('player', 'exp'),
           @data.dig('player', 'level'),
           @data.dig('player', 'glory'),
-          @data.dig('starsInfo', 'totalStarsCount'),
+          [@data.dig('starsInfo', 'totalStarsCount'), @data.dig('starsInfo', 'nextReward')].join(' / '),
           @data.dig('player', 'dust_equipment'),
           @data.dig('player', 'dust_dungeonCards'),
           @data.dig('player', 'tutorial'),

@@ -20,6 +20,16 @@ module Monolisk
 
         level
       end
+
+      def stars_for_next_reward(stars)
+        next_reward = 0
+        @data['obtainedStarsRewardTiers'].each do |reward|
+          next_reward = reward
+          break if reward > stars
+        end
+
+        next_reward
+      end
     end
   end
 end

@@ -144,6 +144,7 @@ SHELL.add_command(
   end
 
   data['player']['level'] = GAME.conversion_tables.exp_to_level(data.dig('player', 'exp'))
+  data['starsInfo']['nextReward'] = GAME.conversion_tables.stars_for_next_reward(data.dig('starsInfo', 'totalStarsCount'))
 
   profile = Printer::Profile.new(data)
   shell.puts(profile)
@@ -175,6 +176,7 @@ SHELL.add_command(
   data = JSON.parse(data)
 
   data['player']['level'] = GAME.conversion_tables.exp_to_level(data.dig('player', 'exp'))
+  data['starsInfo']['nextReward'] = GAME.conversion_tables.stars_for_next_reward(data.dig('starsInfo', 'totalStarsCount'))
 
   profile = Printer::Profile.new(data)
   shell.puts(profile)

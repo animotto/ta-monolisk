@@ -1013,5 +1013,16 @@ module Monolisk
         @sid
       )
     end
+
+    ##
+    # Marks as shown obtained stars rewards
+    def obtained_stars_rewards_shown(id = @id)
+      @client.request(
+        'obtained_stars_rewards_shown',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
   end
 end
