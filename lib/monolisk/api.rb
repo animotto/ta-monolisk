@@ -589,6 +589,17 @@ module Monolisk
     end
 
     ##
+    # Claims seasonal rank rewards
+    def claim_seasonal_rank_rewards(id = @id)
+      @client.request(
+        'claim_seasonal_rank_rewards',
+        { 'id_player' => id },
+        id,
+        @sid
+      )
+    end
+
+    ##
     # Purchases cards pack with coins
     def purchase_cards_pack_with_coins(pack, coins_before, id = @id)
       @client.request(

@@ -102,7 +102,8 @@ module Printer
           'Stars',
           'Dust equipment',
           'Dust dungeon',
-          'Tutorial'
+          'Tutorial',
+          'Seasonal reward'
         ],
         [
           @data.dig('player', 'id'),
@@ -114,7 +115,8 @@ module Printer
           @data.dig('starsInfo', 'totalStarsCount'),
           @data.dig('player', 'dust_equipment'),
           @data.dig('player', 'dust_dungeonCards'),
-          @data.dig('player', 'tutorial')
+          @data.dig('player', 'tutorial'),
+          @data.dig('player', 'unclaimedSeasonalRewardRankId').negative? ? '-' : '+'
         ]
       ).to_s
     end

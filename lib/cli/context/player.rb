@@ -434,6 +434,48 @@ rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
 
+# claim
+CONTEXT_PLAYER.add_command(
+  :claim,
+  description: 'Claim seasonal rewards'
+) do |_tokens, shell|
+  unless GAME.connected?
+    LOGGER.log(NOT_CONNECTED)
+    next
+  end
+
+  data = GAME.api.claim_seasonal_rank_rewards
+  data = JSON.parse(data)
+
+  table = Printer::List.new(
+    'Rewards',
+    [
+      'Coins',
+      'Dust equipment',
+      'Dust dungeon'
+    ],
+    [
+      data.dig('rewards', 'coins'),
+      data.dig('rewards', 'dust_equipment'),
+      data.dig('rewards', 'dust_dungeonCards')
+    ]
+  )
+
+  shell.puts(table)
+  shell.puts
+
+  table = Printer::Table.new(
+    'Cards',
+    ['ID', 'Amount'],
+    data['cards'].map { |c| [c['identifier'], c['count']] }
+  )
+
+  shell.puts(table)
+rescue Monolisk::NothingToUnpackError
+  LOGGER.fail('Nothing to unpack')
+rescue Monolisk::RequestError => e
+  LOGGER.fail(e)
+end
 ## Dungeon commands
 
 # list
