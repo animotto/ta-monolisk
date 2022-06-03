@@ -155,6 +155,7 @@ module Monolisk
       client = @clients.first if client.nil?
       client.mutex.synchronize do
         begin
+          client.client.start unless client.client.started?
           response = client.client.post(query, params, HEADERS)
         rescue StandardError => e
           raise RequestError.new(e.class.to_s, query)
