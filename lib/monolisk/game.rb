@@ -9,7 +9,8 @@ module Monolisk
     LANGAUGE = 'EN'
 
     attr_reader :id, :password, :api, :app_settings, :goal_types,
-                :conversion_tables, :passives_settings, :ccgi_properties
+                :conversion_tables, :passives_settings, :ccgi_properties,
+                :seasonal_challenge_types
 
     def initialize(
       id = nil,
@@ -42,6 +43,7 @@ module Monolisk
       @goal_types = Metadata::GoalTypes.new(@api)
       @passives_settings = Metadata::PassivesSettings.new(@api)
       @ccgi_properties = Metadata::CCGIProperties.new(@api)
+      @seasonal_challenge_types = Metadata::SeasonalChallengeTypes.new(@api)
     end
 
     ##
@@ -103,6 +105,9 @@ module Monolisk
 
       @ccgi_properties.unit.load
       yield('CCGI unit properties') if block_given?
+
+      @seasonal_challenge_types.load
+      yield('Seasonal challenge types') if block_given?
 
       data = @api.login(@language, @id, @password)
       data = JSON.parse(data)
