@@ -20,7 +20,9 @@ CONTEXT_PLAYER.add_command(
   data = JSON.parse(data)
 
   data['player']['level'] = GAME.conversion_tables.exp_to_level(data.dig('player', 'exp'))
-  data['starsInfo']['nextReward'] = GAME.conversion_tables.stars_for_next_reward(data.dig('starsInfo', 'totalStarsCount')) unless data['starsInfo'].nil?
+  unless data['starsInfo'].nil?
+    data['starsInfo']['nextReward'] = GAME.conversion_tables.stars_for_next_reward(data.dig('starsInfo', 'totalStarsCount'))
+  end
 
   profile = Printer::Profile.new(data)
   shell.puts(profile)
@@ -180,9 +182,18 @@ CONTEXT_PLAYER.add_command(
     next
   end
 
-  data['loadouts'][key]['loadout'].each do |card|
-    shell.puts(card)
-  end
+  table = Printer::Table.new(
+    'Avatar loadout',
+    ['ID', 'Name'],
+    data['loadouts'][key]['loadout'].map do |c|
+      [
+        c,
+        GAME.ccgi_properties.search(c)['name']
+      ]
+    end
+  )
+
+  shell.puts(table)
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end
@@ -202,8 +213,14 @@ CONTEXT_PLAYER.add_command(
 
   table = Printer::Table.new(
     'Cards',
-    ['ID', 'Amount'],
-    data['ownedCards'].map { |c| [c['identifier'], c['count']] }
+    ['ID', 'Amount', 'Name'],
+    data['ownedCards'].map do |c|
+      [
+        c['identifier'],
+        c['count'],
+        GAME.ccgi_properties.search(c['identifier'])['name']
+      ]
+    end
   )
 
   shell.puts(table)
@@ -286,8 +303,14 @@ CONTEXT_PLAYER.add_command(
 
   table = Printer::Table.new(
     'Cards',
-    ['ID', 'Amount'],
-    data['cards'].map { |c| [c['identifier'], c['count']] }
+    ['ID', 'Amount', 'Name'],
+    data['cards'].map do |c|
+      [
+        c['identifier'],
+        c['count'],
+        GAME.ccgi_properties.search(c['identifier'])['name']
+      ]
+    end
   )
 
   shell.puts(table)
