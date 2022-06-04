@@ -29,13 +29,13 @@ CONTEXT_TOP.add_command(
 
   table = Printer::Table.new(
     'Glory',
-    ['#', 'ID', 'Name', 'Exp', 'Glory'],
+    ['#', 'ID', 'Name', 'Level', 'Glory'],
     data['playerEntries'].map.with_index do |p, i|
       [
         i + 1,
         p['playerId'],
         p['name'],
-        p['exp'],
+        GAME.conversion_tables.exp_to_level(p['exp']),
         p['glory']
       ]
     end,
@@ -72,13 +72,13 @@ CONTEXT_TOP.add_command(
 
   table = Printer::Table.new(
     'Glory',
-    ['#', 'ID', 'Name', 'Exp', 'Glory', 'Stars'],
+    ['#', 'ID', 'Name', 'Level', 'Glory', 'Stars'],
     data['playerEntries'].map.with_index do |p, i|
       [
         i + 1,
         p['playerId'],
         p['name'],
-        p['exp'],
+        GAME.conversion_tables.exp_to_level(p['exp']),
         p['glory'],
         p['perSeasonStarsCount']
       ]
