@@ -4,6 +4,7 @@ require 'net/http'
 require 'securerandom'
 
 module Monolisk
+  #
   # Request error
   class RequestError < StandardError
     attr_reader :data, :query, :code
@@ -131,13 +132,13 @@ module Monolisk
 
     def request(path, params = {}, pid = PID_DEFAULT, sid = SID_DEFAULT)
       params = params.clone
-      params[PARAM_PLATFORM] = @platform
-      params[PARAM_APP_VERSION] = @version
-      params[PARAM_SESSION_ID] = sid
-      params[PARAM_UID] = @uid
+      params[PARAM_PLATFORM] = @platform unless params.key?(PARAM_PLATFORM)
+      params[PARAM_APP_VERSION] = @version unless params.key?(PARAM_APP_VERSION)
+      params[PARAM_SESSION_ID] = sid unless params.key?(PARAM_SESSION_ID)
+      params[PARAM_UID] = @uid unless params.key?(PARAM_UID)
 
       uri_params = params.clone
-      uri_params[PARAM_PID] = pid
+      uri_params[PARAM_PID] = pid unless uri_params.key?(PARAM_PID)
       uri_params.each_key do |k|
         v = uri_params[k].to_s
         next if v.length <= URI_PARAM_SIZE_LIMIT

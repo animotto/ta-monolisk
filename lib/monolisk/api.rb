@@ -4,6 +4,95 @@ module Monolisk
   ##
   # API
   class API
+    COMMANDS = {
+      app_settings: 'get_app_settings',
+      login: 'log_in',
+      login_service: 'attempt_logging_in_using_login_service',
+      link_login_service: 'link_login_service',
+      add_push_notifications_token: 'add_push_notifications_token',
+      player_id_from_name: 'get_player_id_from_name',
+      full_player_info: 'get_full_player_info',
+      check_session: 'check_session',
+      twitch_info: 'get_twitch_info',
+      tutorial_phase: 'set_player_tutorial_phase',
+      suitable_dungeons: 'get_suitable_dungeons_for_player',
+      dungeons_from_follow: 'get_dungeons_from_people_i_follow',
+      newest_dungeons: 'get_newest_dungeons',
+      featured_dungeons: 'get_featured_dungeons',
+      suitable_dungeon_chains: 'get_suitable_dungeon_chains_for_player',
+      newest_dungeon_chains: 'get_newest_dungeon_chains',
+      featured_dungeon_chains: 'get_featured_dungeon_chains',
+      start_dungeon: 'start_dungeon',
+      start_random_dungeon: 'start_random_dungeon',
+      start_dungeon_chain: 'start_dungeon_chain',
+      start_next_dungeon_currently_played_dungeon_chain: 'start_next_dungeon_in_currently_played_dungeon_chain',
+      finish_dungeon: 'dungeon_finished',
+      finish_dungeon_from_dungeon_chain: 'dungeon_from_dungeon_chain_finished',
+      rate_dungeon: 'rate_dungeon',
+      rate_dungeon_chain: 'rate_dungeon_chain',
+      dungeon_chains_play_later: 'get_play_later_dungeon_chains',
+      remove_dungeon_chain_play_later: 'remove_dungeon_chain_from_play_later',
+      currently_played_dungeon_chain: 'get_currently_played_dungeon_chain',
+      dungeon_comments: 'get_dungeon_comments',
+      dungeon_chain_comments: 'get_dungeon_chain_comments',
+      add_dungeon_comment: 'add_dungeon_comment',
+      add_dungeon_chain_comment: 'add_dungeon_chain_comment',
+      player_name: 'set_player_name',
+      discard_daily_goal: 'discard_daily_goal',
+      top_players_by_glory: 'get_top_players_by_glory',
+      top_players_by_stars: 'get_top_players_by_stars',
+      player_profile_info: 'get_player_profile_info',
+      player_profile_info_by_name: 'get_player_profile_info_by_name',
+      save_avatar_loadout: 'save_avatar_loadout',
+      save_avatar_passives: 'save_avatar_passives',
+      claim_starter_cards_reward: 'claim_starter_cards_reward',
+      claim_seasonal_rank_rewards: 'claim_seasonal_rank_rewards',
+      purchase_cards_pack_with_coins: 'purchase_cards_pack_with_coins',
+      purchase_card_with_dust: 'purchase_card_with_dust',
+      unpack_cards_pack: 'unpack_cards_pack',
+      subscribe_email: 'subscribe_using_email',
+      sell_all_duplicates: 'sell_all_equipment_duplicates_for_dust',
+      mark_new_cards_viewed: 'mark_new_cards_as_viewed',
+      cross_platform_new_code: 'get_new_cross_platform_connect_code',
+      player_dungeons: 'list_players_own_dungeons',
+      player_followig_list: 'get_players_following_list',
+      player_followers_list: 'get_players_followers_list',
+      follow_player: 'follow_player',
+      unfollow_player: 'unfollow_player',
+      create_player: 'create_player',
+      localizations: 'get_localizations',
+      ccgi_properties_body: 'get_all_ccgi_properties_of_type_body_equipment',
+      ccgi_properties_hands: 'get_all_ccgi_properties_of_type_hands_equipment',
+      ccgi_properties_head: 'get_all_ccgi_properties_of_type_head_equipment',
+      ccgi_properties_legs: 'get_all_ccgi_properties_of_type_legs_equipment',
+      ccgi_properties_neck: 'get_all_ccgi_properties_of_type_neck_equipment',
+      ccgi_properties_primary: 'get_all_ccgi_properties_of_type_primary_equipment',
+      ccgi_properties_secondary: 'get_all_ccgi_properties_of_type_secondary_equipment',
+      ccgi_properties_shoulders: 'get_all_ccgi_properties_of_type_shoulders_equipment',
+      ccgi_properties_special_ability: 'get_all_ccgi_properties_of_type_special_ability',
+      ccgi_properties_movement_skill: 'get_all_ccgi_properties_of_type_movement_skill',
+      ccgi_properties_dungeon_shardstone: 'get_all_ccgi_properties_of_type_dungeon_shardstone',
+      ccgi_properties_dungeon_skin: 'get_all_ccgi_properties_of_type_dungeon_skin',
+      ccgi_properties_unit: 'get_all_ccgi_properties_of_type_unit',
+      special_effect_properties: 'get_all_general_special_effect_properties',
+      season_info: 'get_season_info',
+      seasonal_ranking_settings: 'get_seasonal_ranking_settings',
+      seasonal_challenge_types: 'get_seasonal_challenge_types',
+      conversion_tables: 'get_conversion_tables',
+      daily_goal_types: 'get_daily_goal_types',
+      hints: 'get_hints',
+      crafting_settings: 'get_crafting_settings',
+      avatars_progress_passives_settings: 'get_avatars_progress_and_passives_settings',
+      scene_info_create_dungeon: 'scene_info_create_new_dungeon',
+      scene_info_edit_dungeon_properties: 'scene_info_edit_dungeon_properties',
+      create_dungeon: 'create_new_dungeon',
+      dungeon_for_editing: 'get_dungeon_for_editing',
+      dungeon_content_under_construction: 'set_under_construction_dungeon_content',
+      dungeon_for_testing: 'get_dungeon_for_testing',
+      dungeon_ready_to_publish: 'dungeon_ready_to_publish',
+      obtained_stars_rewards_shown: 'obtained_stars_rewards_shown'
+    }.freeze
+
     attr_reader :client
 
     attr_accessor :sid
@@ -34,14 +123,14 @@ module Monolisk
     ##
     # Returns application settings
     def app_settings
-      @client.request('get_app_settings')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Authenticates by id and password
     def login(language, id = @id, password = @password)
       @client.request(
-        'log_in',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'password' => password,
@@ -54,7 +143,7 @@ module Monolisk
     # Tries logging in using a login service
     def login_service(service, payload)
       @client.request(
-        'attempt_logging_in_using_login_service',
+        COMMANDS[__method__],
         {
           'service' => service,
           'service_payload' => payload
@@ -66,7 +155,7 @@ module Monolisk
     # Links login service
     def link_login_service(service, payload, id = @id)
       @client.request(
-        'link_login_service',
+        COMMANDS[__method__],
         {
           'service' => service,
           'service_payload' => payload
@@ -80,7 +169,7 @@ module Monolisk
     # Adds push notifications token
     def add_push_notifications_token(platform, token, id = @id)
       @client.request(
-        'add_push_notifications_token',
+        COMMANDS[__method__],
         {
           'notif_platform' => platform,
           'token' => token
@@ -94,7 +183,7 @@ module Monolisk
     # Returns a player id by name
     def player_id_from_name(name)
       @client.request(
-        'get_player_id_from_name',
+        COMMANDS[__method__],
         { 'name' => name }
       )
     end
@@ -103,7 +192,7 @@ module Monolisk
     # Returns player info
     def full_player_info(id = @id)
       @client.request(
-        'get_full_player_info',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -114,7 +203,7 @@ module Monolisk
     # Checks the session
     def check_session(id = @id)
       @client.request(
-        'check_session',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -125,7 +214,7 @@ module Monolisk
     # Returns twitch info
     def twitch_info(id = @id)
       @client.request(
-        'get_twitch_info',
+        COMMANDS[__method__],
         {},
         id,
         @sid
@@ -136,7 +225,7 @@ module Monolisk
     # Sets player tutorial phase
     def tutorial_phase(tutorial, coins, id = @id)
       @client.request(
-        'set_player_tutorial_phase',
+        COMMANDS[__method__],
         {
           'tut_phase' => tutorial,
           'coins_collected' => coins,
@@ -151,7 +240,7 @@ module Monolisk
     # Returns suitable dungeons for player
     def suitable_dungeons(id = @id)
       @client.request(
-        'get_suitable_dungeons_for_player',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -162,7 +251,7 @@ module Monolisk
     # Returns dungeons from followed list
     def dungeons_from_follow(id = @id)
       @client.request(
-        'get_dungeons_from_people_i_follow',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -173,7 +262,7 @@ module Monolisk
     # Returns newest dungeons
     def newest_dungeons(id = @id)
       @client.request(
-        'get_newest_dungeons',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -184,7 +273,7 @@ module Monolisk
     # Returns featured dungeons
     def featured_dungeons(id = @id)
       @client.request(
-        'get_featured_dungeons',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -195,7 +284,7 @@ module Monolisk
     # Returns suitable dungeon chains for player
     def suitable_dungeon_chains(id = @id)
       @client.request(
-        'get_suitable_dungeon_chains_for_player',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -206,7 +295,7 @@ module Monolisk
     # Returns newest dungeon chains
     def newest_dungeon_chains(id = @id)
       @client.request(
-        'get_newest_dungeon_chains',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -217,7 +306,7 @@ module Monolisk
     # Returns featured dungeon chains
     def featured_dungeon_chains(id = @id)
       @client.request(
-        'get_featured_dungeon_chains',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -228,7 +317,7 @@ module Monolisk
     # Starts the dungeon
     def start_dungeon(owner_id, dungeon_id, id = @id)
       @client.request(
-        'start_dungeon',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_owner' => owner_id,
@@ -243,7 +332,7 @@ module Monolisk
     # Starts a random dungeon
     def start_random_dungeon(prev_owner_id, prev_dungeon_id, id = @id)
       @client.request(
-        'start_random_dungeon',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_previous_dungeon_owner' => prev_owner_id,
@@ -258,7 +347,7 @@ module Monolisk
     # Starts the dungeon chain
     def start_dungeon_chain(owner_id, dungeon_chain_id, id = @id)
       @client.request(
-        'start_dungeon_chain',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_chain_owner' => owner_id,
@@ -273,7 +362,7 @@ module Monolisk
     # Starts the next dungeon in currently played dungeon chain
     def start_next_dungeon_currently_played_dungeon_chain(id = @id)
       @client.request(
-        'start_next_dungeon_in_currently_played_dungeon_chain',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -284,7 +373,7 @@ module Monolisk
     # Finishes the dungeon
     def finish_dungeon(owner_id, dungeon_id, details, id = @id)
       @client.request(
-        'dungeon_finished',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_owner' => owner_id,
@@ -306,7 +395,7 @@ module Monolisk
       id = @id
     )
       @client.request(
-        'dungeon_from_dungeon_chain_finished',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_owner' => owner_id,
@@ -323,7 +412,7 @@ module Monolisk
     # Rates the dungeon
     def rate_dungeon(owner_id, dungeon_id, rating, id = @id)
       @client.request(
-        'rate_dungeon',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_owner' => owner_id,
@@ -339,7 +428,7 @@ module Monolisk
     # Rates the dungeon chain
     def rate_dungeon_chain(owner_id, dungeon_chain_id, rating, id = @id)
       @client.request(
-        'rate_dungeon_chain',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_chain_owner' => owner_id,
@@ -355,7 +444,7 @@ module Monolisk
     # Returns dungeon chains marked as "play later"
     def dungeon_chains_play_later(id = @id)
       @client.request(
-        'get_play_later_dungeon_chains',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -366,7 +455,7 @@ module Monolisk
     # Removes the dungeon chain from the "play later" list
     def remove_dungeon_chain_play_later(dungeon_chain_id, id = @id)
       @client.request(
-        'remove_dungeon_chain_from_play_later',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_chain' => dungeon_chain_id
@@ -380,7 +469,7 @@ module Monolisk
     # Returns currently played dungeon chain
     def currently_played_dungeon_chain(id = @id)
       @client.request(
-        'get_currently_played_dungeon_chain',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -391,7 +480,7 @@ module Monolisk
     # Returns dungeon comments
     def dungeon_comments(owner_id, dungeon_id, id = @id)
       @client.request(
-        'get_dungeon_comments',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_owner' => owner_id,
@@ -406,7 +495,7 @@ module Monolisk
     # Returns dungeon chain comments
     def dungeon_chain_comments(owner_id, dungeon_chain_id, id = @id)
       @client.request(
-        'get_dungeon_chain_comments',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_chain_owner' => owner_id,
@@ -428,7 +517,7 @@ module Monolisk
       id = @id
     )
       @client.request(
-        'add_dungeon_comment',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_owner' => owner_id,
@@ -452,7 +541,7 @@ module Monolisk
       id = @id
     )
       @client.request(
-        'add_dungeon_chain_comment',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon_chain_owner' => owner_id,
@@ -469,7 +558,7 @@ module Monolisk
     # Sets player name
     def player_name(name, id = @id)
       @client.request(
-        'set_player_name',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'name' => name
@@ -483,7 +572,7 @@ module Monolisk
     # Discards a daily goal
     def discard_daily_goal(goal_type, id = @id)
       @client.request(
-        'discard_daily_goal',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'daily_goal_type' => goal_type
@@ -497,7 +586,7 @@ module Monolisk
     # Returns top players by glory
     def top_players_by_glory(id = @id)
       @client.request(
-        'get_top_players_by_glory',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -508,7 +597,7 @@ module Monolisk
     # Returns top players by stars
     def top_players_by_stars(id = @id)
       @client.request(
-        'get_top_players_by_stars',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -519,7 +608,7 @@ module Monolisk
     # Returns players profile info
     def player_profile_info(player, id = @id)
       @client.request(
-        'get_player_profile_info',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_profile' => player
@@ -533,7 +622,7 @@ module Monolisk
     # Returns players profile info by name
     def player_profile_info_by_name(name, id = @id)
       @client.request(
-        'get_player_profile_info_by_name',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'profile_name' => name
@@ -547,7 +636,7 @@ module Monolisk
     # Saves the avatars loadout
     def save_avatar_loadout(avatar, loadout, id = @id)
       @client.request(
-        'save_avatar_loadout',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_avatar' => avatar,
@@ -562,7 +651,7 @@ module Monolisk
     # Saves the avatars passives
     def save_avatar_passives(avatar, types, levels, id = @id)
       @client.request(
-        'save_avatar_passives',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_avatar' => avatar,
@@ -578,7 +667,7 @@ module Monolisk
     # Claims starter cards reward
     def claim_starter_cards_reward(card, id = @id)
       @client.request(
-        'claim_starter_cards_reward',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'selected_card' => card
@@ -592,7 +681,7 @@ module Monolisk
     # Claims seasonal rank rewards
     def claim_seasonal_rank_rewards(id = @id)
       @client.request(
-        'claim_seasonal_rank_rewards',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -603,7 +692,7 @@ module Monolisk
     # Purchases cards pack with coins
     def purchase_cards_pack_with_coins(pack, coins_before, id = @id)
       @client.request(
-        'purchase_cards_pack_with_coins',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'pack_type' => pack,
@@ -618,7 +707,7 @@ module Monolisk
     # Purchases a card with dust
     def purchase_card_with_dust(card, count, id = @id)
       @client.request(
-        'purchase_card_with_dust',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'card_identifier' => card,
@@ -633,7 +722,7 @@ module Monolisk
     # Unpacks cards pack
     def unpack_cards_pack(pack, count_before, id = @id)
       @client.request(
-        'unpack_cards_pack',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'pack_type' => pack,
@@ -648,7 +737,7 @@ module Monolisk
     # Subscribes using email
     def subscribe_email(email, language, id = @id)
       @client.request(
-        'subscribe_using_email',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'email' => email,
@@ -663,7 +752,7 @@ module Monolisk
     # Sells all equipment duplicates for dust
     def sell_all_duplicates(id = @id)
       @client.request(
-        'sell_all_equipment_duplicates_for_dust',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -674,7 +763,7 @@ module Monolisk
     # Marks new cards as viewed
     def mark_new_cards_viewed(cards, id = @id)
       @client.request(
-        'mark_new_cards_as_viewed',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'card_identifiers' => cards
@@ -688,7 +777,7 @@ module Monolisk
     # Returns a new cross platform code
     def cross_platform_new_code(id = @id)
       @client.request(
-        'get_new_cross_platform_connect_code',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -699,7 +788,7 @@ module Monolisk
     # Returns a list of players dungeons
     def player_dungeons(id = @id)
       @client.request(
-        'list_players_own_dungeons',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -710,7 +799,7 @@ module Monolisk
     # Returns a following list
     def player_followig_list(player, id = @id)
       @client.request(
-        'get_players_following_list',
+        COMMANDS[__method__],
         {
           'id_player_asking' => id,
           'id_player' => player
@@ -724,7 +813,7 @@ module Monolisk
     # Returns a followers list
     def player_followers_list(player, id = @id)
       @client.request(
-        'get_players_followers_list',
+        COMMANDS[__method__],
         {
           'id_player_asking' => id,
           'id_player' => player
@@ -738,7 +827,7 @@ module Monolisk
     # Adds a player to the following list
     def follow_player(player, id = @id)
       @client.request(
-        'follow_player',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_player_to_follow' => player
@@ -752,7 +841,7 @@ module Monolisk
     # Removes a player from the following list
     def unfollow_player(player, id = @id)
       @client.request(
-        'unfollow_player',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_player_to_unfollow' => player
@@ -765,14 +854,14 @@ module Monolisk
     ##
     # Creates a new player
     def create_player
-      @client.request('create_player')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns language localizations
     def localizations(language)
       @client.request(
-        'get_localizations',
+        COMMANDS[__method__],
         { 'language' => language }
       )
     end
@@ -780,140 +869,140 @@ module Monolisk
     ##
     # Returns card properties of body equipment
     def ccgi_properties_body
-      @client.request('get_all_ccgi_properties_of_type_body_equipment')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of hands equipment
     def ccgi_properties_hands
-      @client.request('get_all_ccgi_properties_of_type_hands_equipment')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of head equipment
     def ccgi_properties_head
-      @client.request('get_all_ccgi_properties_of_type_head_equipment')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of legs equipment
     def ccgi_properties_legs
-      @client.request('get_all_ccgi_properties_of_type_legs_equipment')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of neck equipment
     def ccgi_properties_neck
-      @client.request('get_all_ccgi_properties_of_type_neck_equipment')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of primary equipment
     def ccgi_properties_primary
-      @client.request('get_all_ccgi_properties_of_type_primary_equipment')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of secondary equipment
     def ccgi_properties_secondary
-      @client.request('get_all_ccgi_properties_of_type_secondary_equipment')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of shoulders equipment
     def ccgi_properties_shoulders
-      @client.request('get_all_ccgi_properties_of_type_shoulders_equipment')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of special ability
     def ccgi_properties_special_ability
-      @client.request('get_all_ccgi_properties_of_type_special_ability')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of movement skill
     def ccgi_properties_movement_skill
-      @client.request('get_all_ccgi_properties_of_type_movement_skill')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of dungeon shardstone
     def ccgi_properties_dungeon_shardstone
-      @client.request('get_all_ccgi_properties_of_type_dungeon_shardstone')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of dungeon skin
     def ccgi_properties_dungeon_skin
-      @client.request('get_all_ccgi_properties_of_type_dungeon_skin')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns card properties of unit
     def ccgi_properties_unit
-      @client.request('get_all_ccgi_properties_of_type_unit')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns special effect properties
     def special_effect_properties
-      @client.request('get_all_general_special_effect_properties')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns the current season info
     def season_info
-      @client.request('get_season_info')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns seasonal ranking settings
     def seasonal_ranking_settings
-      @client.request('get_seasonal_ranking_settings')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns seasonal challenge types
     def seasonal_challenge_types
-      @client.request('get_seasonal_challenge_types')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns conversion tables
     def conversion_tables
-      @client.request('get_conversion_tables')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns daily goal types
     def daily_goal_types
-      @client.request('get_daily_goal_types')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns hints
     def hints
-      @client.request('get_hints')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns crafting settings
     def crafting_settings
-      @client.request('get_crafting_settings')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns avatars progress and passives settings
     def avatars_progress_passives_settings
-      @client.request('get_avatars_progress_and_passives_settings')
+      @client.request(COMMANDS[__method__])
     end
 
     ##
     # Returns available skins and shardstones to create a new dungeon
     def scene_info_create_dungeon(id = @id)
       @client.request(
-        'scene_info_create_new_dungeon',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid
@@ -924,7 +1013,7 @@ module Monolisk
     # Returns dungeon properties for edit
     def scene_info_edit_dungeon_properties(dungeon, id = @id)
       @client.request(
-        'scene_info_edit_dungeon_properties',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon' => dungeon
@@ -938,7 +1027,7 @@ module Monolisk
     # Creates a new dungeon
     def create_dungeon(name, skin, shardstone, language, id = @id)
       @client.request(
-        'create_new_dungeon',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'name' => name,
@@ -955,7 +1044,7 @@ module Monolisk
     # Returns a dungeon for editing
     def dungeon_for_editing(dungeon, id = @id)
       @client.request(
-        'get_dungeon_for_editing',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon' => dungeon
@@ -969,7 +1058,7 @@ module Monolisk
     # Sets under construction dungeon content
     def dungeon_content_under_construction(dungeon, content, placement_price, difficulty, language, id = @id)
       @client.request(
-        'set_under_construction_dungeon_content',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon' => dungeon,
@@ -987,7 +1076,7 @@ module Monolisk
     # Returns a dungeon for testing
     def dungeon_for_testing(dungeon, prefer_published, id = @id)
       @client.request(
-        'get_dungeon_for_testing',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon' => dungeon,
@@ -1002,7 +1091,7 @@ module Monolisk
     # Publishes dungeon
     def dungeon_ready_to_publish(dungeon, publish_now, details, id = @id)
       @client.request(
-        'dungeon_ready_to_publish',
+        COMMANDS[__method__],
         {
           'id_player' => id,
           'id_dungeon' => dungeon,
@@ -1018,7 +1107,7 @@ module Monolisk
     # Marks as shown obtained stars rewards
     def obtained_stars_rewards_shown(id = @id)
       @client.request(
-        'obtained_stars_rewards_shown',
+        COMMANDS[__method__],
         { 'id_player' => id },
         id,
         @sid

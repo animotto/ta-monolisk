@@ -14,6 +14,9 @@ CONTEXT_TOP = SHELL.add_context(:top, description: 'Top players')
 # script
 CONTEXT_SCRIPT = SHELL.add_context(:script, description: 'Scripts')
 
+# query
+CONTEXT_QUERY = SHELL.add_context(:query, description: 'Query')
+
 ## Commands
 
 # connect
