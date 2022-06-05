@@ -103,7 +103,7 @@ unless config.key?('id') && config.key?('password')
   exit
 end
 
-GAME = Monolisk::Game.new(config['id'], config['password'])
+GAME = Monolisk::Game.new(config['id'], config['password'], DATA_DIR)
 
 require 'cli'
 

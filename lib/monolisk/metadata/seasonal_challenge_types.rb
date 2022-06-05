@@ -7,11 +7,17 @@ module Monolisk
     class SeasonalChallengeTypes < Base
       include Enumerable
 
+      CACHE_FILE = 'seasonal_challenge_types'
+
       ChallengeType = Struct.new(:type, :name, :target, :reward, :multiplier)
 
       def load
-        @data = @api.seasonal_challenge_types
-        @data = JSON.parse(@data)
+        unless load_from_cache(@game.app_settings.get('seasonalChallengeTypesVersion'))
+          @data = @api.seasonal_challenge_types
+          @data = JSON.parse(@data)
+
+          save_to_cache(@game.app_settings.get('seasonalChallengeTypesVersion'))
+        end
 
         @challenge_types = @data['allSeasonalChallengeDetails'].map do |c|
           ChallengeType.new(

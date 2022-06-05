@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'metadata/builder'
 require_relative 'metadata/base'
 require_relative 'metadata/app_settings'
 require_relative 'metadata/conversion_tables'

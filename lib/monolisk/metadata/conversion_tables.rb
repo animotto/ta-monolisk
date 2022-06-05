@@ -5,9 +5,15 @@ module Monolisk
     ##
     # Conversion tables
     class ConversionTables < Base
+      CACHE_FILE = 'conversion_tables'
+
       def load
+        return if load_from_cache(@game.app_settings.get('conversionTablesVersion'))
+
         @data = @api.conversion_tables
         @data = JSON.parse(@data)
+
+        save_to_cache(@game.app_settings.get('conversionTablesVersion'))
       end
 
       def exp_to_level(exp)

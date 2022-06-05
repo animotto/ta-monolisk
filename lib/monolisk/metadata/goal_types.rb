@@ -7,11 +7,17 @@ module Monolisk
     class GoalTypes < Base
       include Enumerable
 
+      CACHE_FILE = 'goal_types'
+
       GoalType = Struct.new(:type, :name, :target, :reward)
 
       def load
-        @data = @api.daily_goal_types
-        @data = JSON.parse(@data)
+        unless load_from_cache(@game.app_settings.get('dailyGoalTypesVersion'))
+          @data = @api.daily_goal_types
+          @data = JSON.parse(@data)
+
+          save_to_cache(@game.app_settings.get('dailyGoalTypesVersion'))
+        end
 
         @goal_types = @data['allDailyGoalDetails'].map do |goal_type|
           GoalType.new(

@@ -7,6 +7,8 @@ module Monolisk
     class PassivesSettings < Base
       include Enumerable
 
+      CACHE_FILE = 'passives_settings'
+
       PassiveSetting = Struct.new(
         :type,
         :name,
@@ -17,8 +19,12 @@ module Monolisk
       )
 
       def load
-        @data = @api.avatars_progress_passives_settings
-        @data = JSON.parse(@data)
+        unless load_from_cache(@game.app_settings.get('avatarsProgressAndPassivesSettingsVersion'))
+          @data = @api.avatars_progress_passives_settings
+          @data = JSON.parse(@data)
+
+          save_to_cache(@game.app_settings.get('avatarsProgressAndPassivesSettingsVersion'))
+        end
 
         @passives_settings = @data['allAvatarsPassivesDetails'].map do |passive|
           PassiveSetting.new(

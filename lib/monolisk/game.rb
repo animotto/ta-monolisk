@@ -15,6 +15,7 @@ module Monolisk
     def initialize(
       id = nil,
       password = nil,
+      data_dir = nil,
       host: Client::HOST,
       port: Client::PORT,
       ssl: Client::SSL,
@@ -25,6 +26,7 @@ module Monolisk
     )
       @id = id
       @password = password
+      @data_dir = data_dir
       @language = language
 
       @api = API.new(
@@ -38,12 +40,13 @@ module Monolisk
         version: version
       )
 
-      @app_settings = Metadata::AppSettings.new(@api)
-      @conversion_tables = Metadata::ConversionTables.new(@api)
-      @goal_types = Metadata::GoalTypes.new(@api)
-      @passives_settings = Metadata::PassivesSettings.new(@api)
-      @ccgi_properties = Metadata::CCGIProperties.new(@api)
-      @seasonal_challenge_types = Metadata::SeasonalChallengeTypes.new(@api)
+      metadata = Metadata::Builder.new(self, @data_dir)
+      @app_settings = metadata.app_settings
+      @conversion_tables = metadata.conversion_tables
+      @goal_types = metadata.goal_types
+      @passives_settings = metadata.passives_settings
+      @ccgi_properties = metadata.ccgi_properties
+      @seasonal_challenge_types = metadata.seasonal_challenge_types
     end
 
     ##
