@@ -68,7 +68,7 @@ def start
 
     object['t'].each do |t|
       x = t[0] + minx.abs
-      y = t[1] + miny.abs
+      y = ((t[1] + miny.abs) * -1) - 1
       i = (y * width) + x
       map[i] = s
     end
@@ -77,7 +77,7 @@ def start
   layer1['objs'].each do |object|
     object['t'].each do |t|
       x = t[0] + minx.abs
-      y = t[1] + miny.abs
+      y = ((t[1] + miny.abs) * -1) - 1
       i = (y * width) + x
       next if map[i].empty?
 
