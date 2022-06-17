@@ -27,6 +27,11 @@ module Monolisk
         level
       end
 
+      def level_to_exp(level)
+        level = @data['levelToExpTable'].length - 1 if level >= @data['levelToExpTable'].length
+        @data['levelToExpTable'][level]
+      end
+
       def stars_for_next_reward(stars)
         next_reward = 0
         @data['obtainedStarsRewardTiers'].each do |reward|

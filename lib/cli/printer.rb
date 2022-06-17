@@ -109,7 +109,7 @@ module Printer
           @data.dig('player', 'id'),
           @data.dig('player', 'name'),
           @data.dig('player', 'coins'),
-          @data.dig('player', 'exp'),
+          [@data.dig('player', 'exp'), @data.dig('player', 'nextLevel')].join(' / '),
           @data.dig('player', 'level'),
           @data.dig('player', 'glory'),
           [@data.dig('starsInfo', 'totalStarsCount'), @data.dig('starsInfo', 'nextReward')].join(' / '),

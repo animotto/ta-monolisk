@@ -147,6 +147,7 @@ SHELL.add_command(
   end
 
   data['player']['level'] = GAME.conversion_tables.exp_to_level(data.dig('player', 'exp'))
+  data['player']['nextLevel'] = GAME.conversion_tables.level_to_exp(data['player']['level'] + 1)
   unless data['starsInfo'].nil?
     data['starsInfo']['nextReward'] = GAME.conversion_tables.stars_for_next_reward(data.dig('starsInfo', 'totalStarsCount'))
   end
@@ -181,6 +182,7 @@ SHELL.add_command(
   data = JSON.parse(data)
 
   data['player']['level'] = GAME.conversion_tables.exp_to_level(data.dig('player', 'exp'))
+  data['player']['nextLevel'] = GAME.conversion_tables.level_to_exp(data['player']['level'] + 1)
   unless data['starsInfo'].nil?
     data['starsInfo']['nextReward'] = GAME.conversion_tables.stars_for_next_reward(data.dig('starsInfo', 'totalStarsCount'))
   end
