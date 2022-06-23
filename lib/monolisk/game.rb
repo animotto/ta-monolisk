@@ -15,7 +15,7 @@ module Monolisk
     def initialize(
       id = nil,
       password = nil,
-      data_dir = nil,
+      data_dir: nil,
       host: Client::HOST,
       port: Client::PORT,
       ssl: Client::SSL,

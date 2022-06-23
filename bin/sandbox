@@ -45,7 +45,7 @@ if options.key?(:n)
     exit
   end
 
-  game = Monolisk::Game.new
+  game = Monolisk::Game.new(data_dir: DATA_DIR)
   data = game.api.create_player
   data = JSON.parse(data)
   config = {
@@ -103,7 +103,7 @@ unless config.key?('id') && config.key?('password')
   exit
 end
 
-GAME = Monolisk::Game.new(config['id'], config['password'], DATA_DIR)
+GAME = Monolisk::Game.new(config['id'], config['password'], data_dir: DATA_DIR)
 
 require 'cli'
 
