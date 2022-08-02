@@ -350,6 +350,8 @@ CONTEXT_PLAYER.add_command(
 
   GAME.api.player_name(tokens[1])
   LOGGER.success('OK')
+rescue Monolisk::PlayerNameAlreadyInUseError
+  LOGGER.fail('Player name already in use')
 rescue Monolisk::RequestError => e
   LOGGER.fail(e)
 end

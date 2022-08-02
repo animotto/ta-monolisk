@@ -57,6 +57,10 @@ module Monolisk
   class NothingToUnpackError < RequestError; end
 
   ##
+  # Player name already in use error
+  class PlayerNameAlreadyInUseError < RequestError; end
+
+  ##
   # Client
   class Client
     HOST = 'monolisk.appspot.com'
@@ -95,7 +99,8 @@ module Monolisk
       'PublishedDungeonNotFoundException' => DungeonNotFoundError,
       'InvalidParametersException' => InvalidParametersError,
       'NotEnoughCoinsException' => NotEnoughCoinsError,
-      'NothingToUnpackException' => NothingToUnpackError
+      'NothingToUnpackException' => NothingToUnpackError,
+      'PlayerNameAlreadyInUseException' => PlayerNameAlreadyInUseError
     }.freeze
 
     attr_reader :host, :port, :ssl, :path, :platform, :version, :amount
