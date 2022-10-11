@@ -182,7 +182,13 @@ def start
     details = JSON.generate(details)
 
     Kernel.sleep(options[:s] || time)
-    finish_data = @game.api.finish_dungeon(owner_id, dungeon_id, details)
+    begin
+      finish_data = @game.api.finish_dungeon(owner_id, dungeon_id, details)
+    rescue Monolisk::RequestError => e
+      @logger.fail(e)
+      next
+    end
+
     finish_data = JSON.parse(finish_data)
     @logger.success('Finish dungeon')
 
