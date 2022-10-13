@@ -36,7 +36,7 @@ end
 ## Commands
 
 # run
-CONTEXT_SCRIPT.add_command(
+CONTEXT_SCRIPT_RUN = CONTEXT_SCRIPT.add_command(
   :run,
   description: 'Run the script',
   params: ['<script>', '[args]']
@@ -81,6 +81,13 @@ CONTEXT_SCRIPT.add_command(
   end
 
   SCRIPTS.counter += 1
+end
+
+CONTEXT_SCRIPT_RUN.completion do |line|
+  next unless Dir.exist?(SCRIPTS_DIR)
+
+  scripts = Dir.children(SCRIPTS_DIR).select { |s| s.end_with?(".#{SCRIPTS_EXT}") }
+  scripts.map { |s| File.basename(s, '.*') }.grep(/^#{Regexp.escape(line)}/)
 end
 
 # kill
